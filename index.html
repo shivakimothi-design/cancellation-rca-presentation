@@ -1,1457 +1,896 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="hi" data-lang="hi" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Theme 4: Why Customers Cancel — Root Cause Analysis</title>
+<title>Why Customers Cancel — Root Cause Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=Noto+Sans+Devanagari:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
   :root {
-    --bg: #FFFFFF;
-    --bg-alt: #F8F8FA;
-    --bg-card: #FFFFFF;
-    --text: #1A1A2E;
-    --text-secondary: #555570;
-    --text-muted: #8888A0;
-    --border: #E8E8F0;
-    --accent: #D9008D;
-    --accent-light: #FFF0F8;
-    --accent-dark: #A8006D;
-    --green: #10B981;
-    --orange: #F59E0B;
-    --red: #EF4444;
-    --blue: #3B82F6;
-    --purple: #8B5CF6;
-    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-lg: 0 10px 25px rgba(0,0,0,0.08);
-    --radius: 12px;
-    --radius-sm: 8px;
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --surface-2: #f3f3f3;
+    --text: #0f0f0f;
+    --text-muted: #5f5f5f;
+    --text-soft: #999;
+    --border: #e8e8e8;
+    --border-light: #f0f0f0;
+    --pink: #D9008D;
+    --pink-light: #FFF0F8;
+    --pink-bg: rgba(217,0,141,0.06);
+    --red: #E53935;
+    --orange: #FF9800;
+    --green: #43A047;
+    --blue: #1E88E5;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 24px rgba(0,0,0,.08);
+    --radius: 20px;
+    --radius-sm: 12px;
   }
-
   [data-theme="dark"] {
-    --bg: #0F0F1A;
-    --bg-alt: #1A1A2E;
-    --bg-card: #1E1E32;
-    --text: #F0F0F8;
-    --text-secondary: #B0B0C8;
-    --text-muted: #707090;
-    --border: #2A2A40;
-    --accent: #FF2EA8;
-    --accent-light: #2A1025;
-    --accent-dark: #FF5EC0;
-    --shadow: 0 1px 3px rgba(0,0,0,0.3);
-    --shadow-lg: 0 10px 25px rgba(0,0,0,0.4);
+    --bg: #0a0a0a;
+    --surface: #161616;
+    --surface-2: #1f1f1f;
+    --text: #f5f5f5;
+    --text-muted: #a0a0a0;
+    --text-soft: #666;
+    --border: #2a2a2a;
+    --border-light: #1e1e1e;
+    --pink: #FF1FA5;
+    --pink-light: #1a0a14;
+    --pink-bg: rgba(255,31,165,0.08);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.2), 0 4px 16px rgba(0,0,0,.15);
+    --shadow-md: 0 4px 24px rgba(0,0,0,.3);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+    font-family: 'DM Sans', 'Noto Sans Devanagari', sans-serif;
     background: var(--bg);
     color: var(--text);
-    line-height: 1.7;
-    transition: background 0.3s, color 0.3s;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Top Bar */
-  .top-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
+  /* Reading progress */
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: var(--pink); z-index: 200; width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* Topbar */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
     background: var(--bg);
     border-bottom: 1px solid var(--border);
-    padding: 12px 32px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    backdrop-filter: blur(10px);
+    padding: 10px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
-  .top-bar-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  .topbar-brand {
+    display: flex; align-items: center; gap: 10px;
   }
-  .logo-mark {
-    width: 32px; height: 32px;
-    background: var(--accent);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-weight: 800; font-size: 14px;
+  .topbar-logo {
+    width: 28px; height: 28px; background: var(--pink);
+    border-radius: 8px; display: flex; align-items: center;
+    justify-content: center; color: #fff; font-weight: 800; font-size: 13px;
   }
-  .top-bar-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-secondary);
+  .topbar-label {
+    font-size: 13px; font-weight: 600; color: var(--text-muted);
+    letter-spacing: -0.2px;
   }
-  .top-bar-right {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+  .topbar-controls {
+    display: flex; gap: 6px; align-items: center;
   }
-  .toggle-btn {
-    padding: 6px 14px;
-    border-radius: 20px;
-    border: 1px solid var(--border);
-    background: var(--bg-alt);
-    color: var(--text-secondary);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: inherit;
+  .pill-btn {
+    padding: 5px 14px; border-radius: 24px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-muted); font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all .2s; font-family: inherit;
+    letter-spacing: 0.2px;
   }
-  .toggle-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-  .toggle-btn.active {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
+  .pill-btn:hover { border-color: var(--pink); color: var(--pink); }
+  .pill-btn.active {
+    background: var(--pink); color: #fff; border-color: var(--pink);
   }
 
-  /* Main Container */
-  .container {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
+  /* Container */
+  .wrap {
+    max-width: 760px; margin: 0 auto; padding: 0 24px;
   }
 
   /* Hero */
   .hero {
-    text-align: center;
-    padding: 60px 20px 48px;
+    padding: 72px 0 48px; text-align: center;
   }
-  .hero-badge {
-    display: inline-block;
-    padding: 6px 16px;
-    background: var(--accent-light);
-    color: var(--accent);
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    border: 1px solid var(--accent);
+  .hero-eyebrow {
+    display: inline-block; padding: 5px 16px; border-radius: 24px;
+    background: var(--pink-bg); color: var(--pink); font-size: 12px;
+    font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    margin-bottom: 24px; border: 1px solid var(--pink);
   }
   .hero h1 {
-    font-size: 36px;
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 16px;
-    letter-spacing: -0.5px;
+    font-family: 'DM Serif Display', 'Noto Sans Devanagari', serif;
+    font-size: 44px; font-weight: 400; line-height: 1.15;
+    letter-spacing: -1px; margin-bottom: 20px;
   }
-  .hero-sub {
-    font-size: 17px;
-    color: var(--text-secondary);
-    max-width: 680px;
-    margin: 0 auto;
-    line-height: 1.7;
+  .hero-lead {
+    font-size: 17px; color: var(--text-muted); max-width: 580px;
+    margin: 0 auto; line-height: 1.7;
   }
 
-  /* Section */
-  .section {
-    margin-top: 56px;
-  }
-  .section-label {
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--accent);
-    margin-bottom: 8px;
+  /* Sections */
+  .section { padding: 56px 0 0; }
+  .eyebrow {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; color: var(--pink); margin-bottom: 10px;
   }
   .section h2 {
-    font-size: 26px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    letter-spacing: -0.3px;
+    font-family: 'DM Serif Display', 'Noto Sans Devanagari', serif;
+    font-size: 30px; font-weight: 400; line-height: 1.25;
+    letter-spacing: -0.5px; margin-bottom: 16px;
   }
-  .section-desc {
-    color: var(--text-secondary);
-    font-size: 15px;
-    margin-bottom: 28px;
-    max-width: 700px;
+  .section-lead {
+    font-size: 16px; color: var(--text-muted); margin-bottom: 32px;
+    line-height: 1.7; max-width: 640px;
   }
 
-  /* Cards */
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 28px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-    transition: all 0.2s;
+  /* Funnel bar */
+  .funnel-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow-sm);
   }
-  .card:hover {
-    box-shadow: var(--shadow-lg);
+  .funnel-title {
+    font-size: 16px; font-weight: 600; margin-bottom: 20px;
+    color: var(--text);
   }
-
-  /* Funnel Bar */
   .funnel-bar {
-    display: flex;
-    border-radius: var(--radius);
-    overflow: hidden;
-    height: 56px;
-    margin: 20px 0;
-    box-shadow: var(--shadow);
+    display: flex; border-radius: 10px; overflow: hidden;
+    height: 52px; box-shadow: var(--shadow-sm);
   }
-  .funnel-segment {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-weight: 700;
-    font-size: 16px;
-    position: relative;
-    transition: all 0.3s;
+  .funnel-seg {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; color: #fff; font-weight: 700; font-size: 15px;
+    transition: all .3s;
   }
-  .funnel-segment span {
-    font-size: 11px;
-    font-weight: 400;
-    opacity: 0.9;
-  }
-  .seg-auto { background: #6B7280; }
-  .seg-blank { background: #9CA3AF; }
-  .seg-self { background: var(--accent); }
+  .funnel-seg small { font-size: 10px; font-weight: 500; opacity: .85; text-transform: uppercase; letter-spacing: 0.5px; }
+  .seg-gray { background: #78909C; }
+  .seg-lgray { background: #B0BEC5; }
+  .seg-pink { background: var(--pink); }
 
   .funnel-legend {
-    display: flex;
-    gap: 24px;
-    flex-wrap: wrap;
-    margin-top: 12px;
-    font-size: 13px;
-    color: var(--text-secondary);
+    display: flex; flex-wrap: wrap; gap: 16px;
+    margin-top: 16px; font-size: 13px; color: var(--text-muted);
   }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  .legend-i { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  /* Big number row */
+  .big-num {
+    text-align: center; padding: 32px 0;
   }
-  .legend-dot {
-    width: 10px; height: 10px;
-    border-radius: 3px;
-    flex-shrink: 0;
+  .big-num .val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 88px; color: var(--pink); line-height: 1;
+    letter-spacing: -3px;
+  }
+  .big-num .label {
+    font-size: 16px; color: var(--text-muted); margin-top: 8px;
   }
 
-  /* Stat Grid */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  /* Cause card (Pain Points) */
+  .cause-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    margin-bottom: 20px; box-shadow: var(--shadow-sm);
+    transition: box-shadow .2s;
+  }
+  .cause-card:hover { box-shadow: var(--shadow-md); }
+
+  .cause-header {
+    padding: 28px 32px;
+    cursor: pointer; user-select: none;
+    display: flex; justify-content: space-between; align-items: flex-start;
     gap: 16px;
-    margin: 20px 0;
+    border-left: 5px solid var(--pink);
+    transition: background .2s;
   }
-  .stat-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 20px;
-    text-align: center;
+  .cause-header:hover { background: var(--pink-bg); }
+  .cause-header.open { background: var(--pink-bg); }
+
+  .cause-rank {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--pink); margin-bottom: 6px;
   }
-  .stat-number {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--accent);
-    line-height: 1;
-    margin-bottom: 6px;
+  .cause-quote {
+    font-family: 'DM Serif Display', 'Noto Sans Devanagari', serif;
+    font-size: 22px; line-height: 1.3; letter-spacing: -0.3px;
+    color: var(--text);
   }
-  .stat-label {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.4;
+  .cause-subtitle {
+    font-size: 14px; color: var(--text-muted); margin-top: 6px;
+    line-height: 1.5;
+  }
+  .cause-right {
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 8px; flex-shrink: 0;
+  }
+  .cause-badge {
+    padding: 4px 14px; border-radius: 20px;
+    background: var(--pink-bg); color: var(--pink);
+    font-size: 13px; font-weight: 700; white-space: nowrap;
+    border: 1px solid var(--pink);
+  }
+  .cause-arrow {
+    font-size: 20px; color: var(--text-soft);
+    transition: transform .3s;
+  }
+  .cause-header.open .cause-arrow { transform: rotate(180deg); }
+
+  .cause-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height .5s ease;
+  }
+  .cause-body.open { max-height: 8000px; }
+  .cause-inner {
+    padding: 0 32px 32px;
+    border-left: 5px solid var(--pink);
   }
 
-  /* Pain point cards */
-  .pain-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
-    border-radius: var(--radius);
-    padding: 28px;
-    margin-bottom: 20px;
-    box-shadow: var(--shadow);
-  }
-  .pain-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+  /* Type sub-cards inside pain point 1 */
+  .type-card {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 24px;
     margin-bottom: 16px;
-    gap: 16px;
-    flex-wrap: wrap;
   }
-  .pain-title {
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 1.3;
-    flex: 1;
+  .type-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--pink); margin-bottom: 4px;
   }
-  .pain-stat {
-    padding: 4px 12px;
-    background: var(--accent-light);
-    color: var(--accent);
-    border-radius: 16px;
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-    border: 1px solid var(--accent);
+  .type-title {
+    font-family: 'DM Serif Display', 'Noto Sans Devanagari', serif;
+    font-size: 19px; line-height: 1.3; margin-bottom: 12px;
   }
-  .pain-body {
-    color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 1.7;
+  .type-stat {
+    display: inline-block; padding: 3px 10px; border-radius: 14px;
+    background: var(--pink-bg); color: var(--pink);
+    font-size: 12px; font-weight: 700; margin-bottom: 14px;
+    border: 1px solid var(--pink);
   }
 
-  /* RCA Chain */
-  .rca-chain {
-    margin: 20px 0;
-  }
+  /* RCA Why Chain */
+  .rca-chain { margin: 20px 0 0; }
   .rca-step {
-    display: flex;
-    gap: 16px;
-    margin-bottom: 0;
-    position: relative;
+    display: flex; gap: 14px; position: relative;
   }
   .rca-track {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 32px;
-    flex-shrink: 0;
+    display: flex; flex-direction: column; align-items: center;
+    width: 24px; flex-shrink: 0;
   }
-  .rca-dot {
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    background: var(--border);
-    border: 2px solid var(--text-muted);
-    flex-shrink: 0;
-    z-index: 1;
+  .rca-node {
+    width: 10px; height: 10px; border-radius: 50%;
+    flex-shrink: 0; z-index: 1;
   }
-  .rca-dot.failure { background: var(--red); border-color: var(--red); }
-  .rca-dot.why { background: var(--orange); border-color: var(--orange); }
-  .rca-dot.root { background: var(--accent); border-color: var(--accent); }
-  .rca-line {
-    width: 2px;
-    flex: 1;
-    background: var(--border);
-    min-height: 20px;
+  .rca-node.obs { background: var(--red); }
+  .rca-node.why { background: var(--orange); }
+  .rca-node.root { background: var(--pink); width: 12px; height: 12px; }
+  .rca-wire {
+    width: 2px; flex: 1; background: var(--border);
+    min-height: 16px;
   }
-  .rca-content {
-    padding-bottom: 20px;
-    flex: 1;
+  .rca-content { padding-bottom: 16px; flex: 1; }
+  .rca-tag {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; margin-bottom: 2px;
   }
-  .rca-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-  }
-  .rca-label.failure { color: var(--red); }
-  .rca-label.why { color: var(--orange); }
-  .rca-label.root { color: var(--accent); }
+  .rca-tag.obs { color: var(--red); }
+  .rca-tag.why { color: var(--orange); }
+  .rca-tag.root { color: var(--pink); }
   .rca-text {
-    font-size: 14px;
-    color: var(--text-secondary);
-    line-height: 1.6;
+    font-size: 14px; color: var(--text-muted); line-height: 1.6;
   }
-  .rca-root-box {
-    background: var(--accent-light);
-    border: 1px solid var(--accent);
+
+  /* Structural Root Cause Box */
+  .root-box {
+    background: var(--pink-bg);
+    border: 1.5px solid var(--pink);
     border-radius: var(--radius-sm);
-    padding: 16px;
-    margin-top: 4px;
+    padding: 20px 24px; margin-top: 6px;
   }
-  .rca-root-box p {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--accent);
-    line-height: 1.5;
+  .root-box p {
+    font-size: 15px; font-weight: 600; color: var(--pink); line-height: 1.55;
   }
-  .rca-root-box .classification {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 6px;
+  .root-box .tag {
+    font-size: 11px; color: var(--text-soft); margin-top: 6px;
+    font-weight: 500;
   }
 
-  /* Evidence placeholder */
-  .evidence-placeholder {
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 32px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 14px;
-    margin: 16px 0;
-    background: var(--bg-alt);
+  /* Evidence section */
+  .evidence {
+    margin-top: 24px; padding-top: 20px;
+    border-top: 1px dashed var(--border);
   }
-  .evidence-placeholder .icon {
-    font-size: 28px;
-    margin-bottom: 8px;
+  .evidence-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.5px; color: var(--text-soft); margin-bottom: 14px;
   }
+  .evidence-item {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 18px 20px;
+    margin-bottom: 10px; font-size: 14px; color: var(--text-muted);
+    line-height: 1.65;
+  }
+  .evidence-item strong { color: var(--text); font-weight: 600; }
 
-  /* Table */
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13px;
-    margin: 16px 0;
-  }
-  .data-table th {
-    background: var(--bg-alt);
-    padding: 10px 14px;
-    text-align: left;
-    font-weight: 600;
-    border-bottom: 2px solid var(--border);
-    color: var(--text-secondary);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  .data-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-secondary);
-  }
-  .data-table tr:hover td {
-    background: var(--bg-alt);
-  }
-  .highlight-row td {
-    font-weight: 600;
-    color: var(--accent) !important;
-  }
-
-  /* Methodology */
-  .method-steps {
-    display: grid;
-    gap: 12px;
-    margin: 20px 0;
-  }
-  .method-step {
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    padding: 16px;
-    background: var(--bg-alt);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-  }
-  .method-num {
-    width: 28px; height: 28px;
-    background: var(--accent);
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-  .method-text {
-    font-size: 14px;
-    color: var(--text-secondary);
-    line-height: 1.5;
-  }
-  .method-text strong {
-    color: var(--text);
-  }
-
-  /* Collapsible */
-  .collapsible-header {
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 24px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    margin-bottom: 8px;
-    font-weight: 600;
-    font-size: 15px;
-    transition: all 0.2s;
-    user-select: none;
-  }
-  .collapsible-header:hover {
-    border-color: var(--accent);
-    box-shadow: var(--shadow);
-  }
-  .collapsible-header .arrow {
-    transition: transform 0.3s;
-    font-size: 18px;
-    color: var(--text-muted);
-  }
-  .collapsible-header.open .arrow {
-    transform: rotate(180deg);
-  }
-  .collapsible-body {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-  }
-  .collapsible-body.open {
-    max-height: 5000px;
-  }
-  .collapsible-inner {
-    padding: 20px 24px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-top: none;
-    border-radius: 0 0 var(--radius) var(--radius);
-    margin-bottom: 16px;
-    margin-top: -8px;
-  }
-
-  /* CX Call Insight */
-  .cx-insight {
-    background: var(--bg-alt);
-    border-left: 3px solid var(--orange);
-    padding: 16px 20px;
-    margin: 12px 0;
+  /* Verbatim quote block */
+  .verbatim {
+    position: relative;
+    padding: 14px 20px 14px 24px;
+    background: var(--surface-2);
+    border-left: 3px solid var(--pink);
     border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin: 10px 0;
     font-size: 14px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-  }
-  .cx-insight strong {
-    color: var(--text);
-  }
-
-  /* Data source note */
-  .data-source {
-    font-size: 12px;
     color: var(--text-muted);
-    margin-top: 24px;
-    padding-top: 16px;
-    border-top: 1px solid var(--border);
+    line-height: 1.6;
+    font-style: italic;
   }
 
-  /* Overlap note */
-  .overlap-note {
-    background: var(--accent-light);
-    border: 1px solid var(--accent);
-    border-radius: var(--radius-sm);
-    padding: 14px 18px;
-    font-size: 13px;
-    color: var(--accent);
-    margin: 16px 0;
-    line-height: 1.5;
+  /* Timeline journey */
+  .journey {
+    margin: 16px 0; font-size: 13px;
   }
+  .journey-title {
+    font-size: 13px; font-weight: 700; color: var(--text);
+    margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .j-step {
+    display: flex; gap: 12px; position: relative;
+    padding-bottom: 6px;
+  }
+  .j-track {
+    display: flex; flex-direction: column; align-items: center;
+    width: 18px; flex-shrink: 0;
+  }
+  .j-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); border: 2px solid var(--text-soft);
+    flex-shrink: 0; z-index: 1;
+  }
+  .j-dot.start { background: var(--pink); border-color: var(--pink); }
+  .j-dot.fail { background: var(--red); border-color: var(--red); }
+  .j-dot.ok { background: var(--green); border-color: var(--green); }
+  .j-dot.end { background: var(--text); border-color: var(--text); }
+  .j-wire { width: 2px; flex: 1; border-left: 2px dashed var(--border); min-height: 4px; }
+  .j-text { color: var(--text-muted); line-height: 1.5; padding-bottom: 4px; }
+  .j-date { color: var(--text-soft); font-size: 12px; font-weight: 600; margin-right: 4px; }
+  .j-summary {
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 18px;
+    font-size: 13px; color: var(--text-muted); line-height: 1.6;
+    margin-top: 8px;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px; background: var(--border); margin: 48px 0;
+  }
+
+  /* Customer journey spectrum callout */
+  .spectrum-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px;
+    box-shadow: var(--shadow-sm); margin: 32px 0;
+  }
+  .spectrum-bar {
+    display: flex; align-items: center; height: 8px;
+    border-radius: 4px; background: var(--surface-2);
+    overflow: hidden; margin: 20px 0 12px;
+    border: 1px solid var(--border);
+  }
+  .spectrum-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green) 0%, var(--orange) 40%, var(--red) 70%, #8B0000 100%);
+    border-radius: 4px;
+    width: 100%;
+  }
+  .spectrum-labels {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text-soft);
+  }
+
+  /* Collapsible within cause */
+  .sub-toggle {
+    cursor: pointer; user-select: none;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px; font-weight: 600; color: var(--text-muted);
+    margin-top: 12px; transition: all .2s;
+  }
+  .sub-toggle:hover { border-color: var(--pink); color: var(--pink); }
+  .sub-toggle .arr { transition: transform .3s; font-size: 16px; }
+  .sub-toggle.open .arr { transform: rotate(180deg); }
+  .sub-body { max-height: 0; overflow: hidden; transition: max-height .5s ease; }
+  .sub-body.open { max-height: 6000px; }
 
   /* Footer */
   .footer {
-    text-align: center;
-    padding: 40px 20px;
-    color: var(--text-muted);
-    font-size: 12px;
-    border-top: 1px solid var(--border);
-    margin-top: 60px;
+    text-align: center; padding: 48px 24px;
+    color: var(--text-soft); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 64px;
   }
 
   /* Responsive */
   @media (max-width: 640px) {
-    .container { padding: 20px 16px 60px; }
-    .hero h1 { font-size: 26px; }
-    .hero-sub { font-size: 15px; }
-    .stat-grid { grid-template-columns: 1fr 1fr; }
-    .top-bar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
-    .funnel-bar { height: 48px; }
-    .funnel-segment { font-size: 13px; }
-    .pain-header { flex-direction: column; }
+    .wrap { padding: 0 18px; }
+    .hero { padding: 48px 0 32px; }
+    .hero h1 { font-size: 30px; letter-spacing: -0.5px; }
+    .section h2 { font-size: 24px; }
+    .cause-header { padding: 20px; }
+    .cause-inner { padding: 0 20px 24px; }
+    .cause-quote { font-size: 18px; }
+    .funnel-wrap { padding: 20px; }
+    .big-num .val { font-size: 60px; }
+    .cause-right { align-items: flex-start; }
   }
 
-  .hidden { display: none !important; }
+  .hi { display: inline; }
+  .en { display: none; }
+  [data-lang="en"] .hi { display: none; }
+  [data-lang="en"] .en { display: inline; }
+  .hi-block { display: block; }
+  .en-block { display: none; }
+  [data-lang="en"] .hi-block { display: none; }
+  [data-lang="en"] .en-block { display: block; }
 </style>
 </head>
 <body>
-<div class="top-bar">
-  <div class="top-bar-left">
-    <div class="logo-mark">W</div>
-    <div class="top-bar-title">Install Funnel Task Force &mdash; Theme 4</div>
+
+<div id="progress"></div>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">W</div>
+    <div class="topbar-label">Theme 4 &mdash; Root Cause Analysis</div>
   </div>
-  <div class="top-bar-right">
-    <button class="toggle-btn active" id="btn-hi" onclick="setLang('hi')">&#2361;&#2367;&#2306;&#2342;&#2368;</button>
-    <button class="toggle-btn" id="btn-en" onclick="setLang('en')">English</button>
-    <button class="toggle-btn" id="btn-theme" onclick="toggleTheme()">&#9790; Dark</button>
+  <div class="topbar-controls">
+    <button class="pill-btn active" id="btn-hi" onclick="setLang('hi')">&#2361;&#2367;&#2306;&#2342;&#2368;</button>
+    <button class="pill-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    <button class="pill-btn" id="btn-theme" onclick="toggleTheme()">&#9790;</button>
   </div>
 </div>
 
-<div class="container">
+<div class="wrap">
 
-<!-- ============ HERO ============ -->
+<!-- ===== HERO ===== -->
 <div class="hero">
-  <div class="hero-badge">
-    <span class="lang-hi">Theme 4 &mdash; Post-Booking Comms & UX</span>
-    <span class="lang-en hidden">Theme 4 &mdash; Post-Booking Comms & UX</span>
-  </div>
+  <div class="hero-eyebrow">Install Funnel Task Force</div>
   <h1>
-    <span class="lang-hi">&#2327;&#2381;&#2352;&#2366;&#2361;&#2325; &#2325;&#2381;&#2351;&#2379;&#2306; Cancel &#2325;&#2352;&#2340;&#2375; &#2361;&#2376;&#2306;?<br>Root Cause Analysis</span>
-    <span class="lang-en hidden">Why Do Customers Cancel?<br>Root Cause Analysis</span>
+    <span class="hi">&#2327;&#2381;&#2352;&#2366;&#2361;&#2325; &#2325;&#2381;&#2351;&#2379;&#2306; Cancel &#2325;&#2352;&#2340;&#2375; &#2361;&#2376;&#2306;?</span>
+    <span class="en">Why Do Customers Cancel?</span>
   </h1>
-  <p class="hero-sub">
-    <span class="lang-hi">Diagnose &#2325;&#2352;&#2375;&#2306; &#2325;&#2367; actively cancel &#2325;&#2352;&#2344;&#2375; &#2357;&#2366;&#2354;&#2375; customers &#2319;&#2360;&#2366; &#2325;&#2381;&#2351;&#2379;&#2306; &#2325;&#2352;&#2340;&#2375; &#2361;&#2376;&#2306;&#2404; Structural system gaps identify &#2325;&#2352;&#2375;&#2306; &mdash; individual blame &#2344;&#2361;&#2368;&#2306;, solutions &#2344;&#2361;&#2368;&#2306;&#2404; Data-led, evidence-backed.</span>
-    <span class="lang-en hidden">Diagnose why customers who actively initiate cancellation do so. Identify structural system gaps &mdash; not individual blame, not solutions. Data-led, evidence-backed.</span>
+  <p class="hero-lead">
+    <span class="hi">&#2332;&#2379; customers actively cancellation initiate &#2325;&#2352;&#2340;&#2375; &#2361;&#2376;&#2306; &#2313;&#2344;&#2325;&#2375; &#2346;&#2368;&#2331;&#2375; &#2325;&#2381;&#2351;&#2366; structural system gaps &#2361;&#2376;&#2306; &mdash; &#2351;&#2361; analysis &#2313;&#2344; gaps &#2325;&#2379; identify &#2325;&#2352;&#2340;&#2366; &#2361;&#2376;&#2404; Data-led, evidence-backed.</span>
+    <span class="en">Identifying the structural system gaps behind customer-initiated cancellations. Data-led, evidence-backed.</span>
   </p>
 </div>
 
-<!-- ============ SECTION 1: OBJECTIVE & SCOPE ============ -->
+<!-- ===== SCOPE ===== -->
 <div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 1</span>
-    <span class="lang-en hidden">SECTION 1</span>
+  <div class="eyebrow">
+    <span class="hi">&#2325;&#2367;&#2360;&#2375; study &#2325;&#2367;&#2351;&#2366;</span>
+    <span class="en">What We Studied</span>
   </div>
   <h2>
-    <span class="lang-hi">&#2313;&#2342;&#2381;&#2342;&#2375;&#2358;&#2381;&#2351; &#2324;&#2352; &#2309;&#2343;&#2381;&#2351;&#2351;&#2344; &#2325;&#2366; &#2342;&#2366;&#2351;&#2352;&#2366;</span>
-    <span class="lang-en hidden">Objective & Scope of Study</span>
+    <span class="hi">1,764 &#2350;&#2375;&#2306; &#2360;&#2375; 579 &mdash; Self-Initiated Cancellations</span>
+    <span class="en">579 out of 1,764 &mdash; Self-Initiated Cancellations</span>
   </h2>
 
-  <div class="card">
-    <p class="section-desc" style="margin-bottom:20px">
-      <span class="lang-hi">1,764 customers &#2344;&#2375; booking fee pay &#2325;&#2367;&#2351;&#2366; &mdash; &#2311;&#2344;&#2350;&#2375;&#2306; &#2360;&#2375; &#2325;&#2367;&#2360;&#2344;&#2375; cancel &#2325;&#2367;&#2351;&#2366; &#2324;&#2352; &#2325;&#2381;&#2351;&#2379;&#2306;?</span>
-      <span class="lang-en hidden">1,764 customers paid booking fee &mdash; who cancelled and why?</span>
-    </p>
-
+  <div class="funnel-wrap">
+    <div class="funnel-title">
+      <span class="hi">1,764 customers &#2344;&#2375; booking fee pay &#2325;&#2367;&#2351;&#2366; &mdash; &#2311;&#2344;&#2350;&#2375;&#2306; &#2360;&#2375; &#2325;&#2367;&#2360;&#2344;&#2375; cancel &#2325;&#2367;&#2351;&#2366; &#2324;&#2352; &#2325;&#2381;&#2351;&#2379;&#2306;?</span>
+      <span class="en">1,764 customers paid booking fee &mdash; who cancelled and why?</span>
+    </div>
     <div class="funnel-bar">
-      <div class="funnel-segment seg-auto" style="width:47.4%">
-        836<span>Auto-cancel</span>
-      </div>
-      <div class="funnel-segment seg-blank" style="width:19.8%">
-        349<span>Blank</span>
-      </div>
-      <div class="funnel-segment seg-self" style="width:32.8%">
-        579<span>Self-initiated</span>
-      </div>
+      <div class="funnel-seg seg-gray" style="width:47.4%">836<small>Auto-cancel</small></div>
+      <div class="funnel-seg seg-lgray" style="width:19.8%">349<small>Blank</small></div>
+      <div class="funnel-seg seg-pink" style="width:32.8%">579<small>Self-initiated</small></div>
     </div>
-
     <div class="funnel-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#6B7280"></div>
-        <span class="lang-hi">Auto-cancelled by system (cops_unserviceable) &mdash; 836 (47%)</span>
-        <span class="lang-en hidden">Auto-cancelled by system (cops_unserviceable) &mdash; 836 (47%)</span>
-      </div>
-      <div class="legend-item"><div class="legend-dot" style="background:#9CA3AF"></div>
-        <span class="lang-hi">Blank / initiator not tagged &mdash; 349 (20%)</span>
-        <span class="lang-en hidden">Blank / initiator not tagged &mdash; 349 (20%)</span>
-      </div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>
-        <span class="lang-hi"><strong>Customer self-initiated &mdash; 579 (33%) &larr; &#2361;&#2350;&#2366;&#2352;&#2366; focus</strong></span>
-        <span class="lang-en hidden"><strong>Customer self-initiated &mdash; 579 (33%) &larr; Our focus</strong></span>
-      </div>
-    </div>
-  </div>
-
-  <div class="stat-grid">
-    <div class="stat-card">
-      <div class="stat-number">578</div>
-      <div class="stat-label">
-        <span class="lang-hi">Self-initiated cancellations &#2325;&#2366; &#2327;&#2361;&#2352;&#2366;&#2312; &#2360;&#2375; analysis</span>
-        <span class="lang-en hidden">Self-initiated cancellations analysed in depth</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">1.8</div>
-      <div class="stat-label">
-        <span class="lang-hi">&#2324;&#2360;&#2340; pain points &#2319;&#2325; &#2360;&#2366;&#2341; (overlap)</span>
-        <span class="lang-en hidden">Average pain points experienced simultaneously</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">50+</div>
-      <div class="stat-label">
-        <span class="lang-hi">CC, partner & technician calls &#2360;&#2369;&#2344;&#2375;</span>
-        <span class="lang-en hidden">CC, partner & technician calls listened</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-number">0%</div>
-      <div class="stat-label">
-        <span class="lang-hi">CC save rate &mdash; &#2319;&#2325; &#2349;&#2368; customer &#2344;&#2361;&#2368;&#2306; &#2348;&#2330;&#2366;</span>
-        <span class="lang-en hidden">CC save rate &mdash; not a single customer saved</span>
+      <div class="legend-i"><div class="legend-dot" style="background:#78909C"></div> Auto-cancelled by system (cops_unserviceable) &mdash; 836 (47%)</div>
+      <div class="legend-i"><div class="legend-dot" style="background:#B0BEC5"></div> Blank / initiator not tagged &mdash; 349 (20%)</div>
+      <div class="legend-i"><div class="legend-dot" style="background:var(--pink)"></div>
+        <strong>Customer self-initiated &mdash; 579 (33%) &larr;
+          <span class="hi">&#2361;&#2350;&#2366;&#2352;&#2366; focus</span>
+          <span class="en">Our focus</span>
+        </strong>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ============ SECTION 2: THE CORE PATTERN ============ -->
+<!-- ===== 578 BIG NUMBER ===== -->
+<div class="big-num">
+  <div class="val">578</div>
+  <div class="label">
+    <span class="hi">self-initiated cancellations &#2325;&#2366; &#2327;&#2361;&#2352;&#2366;&#2312; &#2360;&#2375; analysis &mdash; &#2346;&#2370;&#2352;&#2368; chat journey, CX calls, partner interactions</span>
+    <span class="en">self-initiated cancellations analysed in depth &mdash; complete chat journeys, CX calls, partner interactions</span>
+  </div>
+</div>
+
+<!-- ===== CUSTOMER JOURNEY SPECTRUM ===== -->
 <div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 2</span>
-    <span class="lang-en hidden">SECTION 2</span>
+  <div class="eyebrow">
+    <span class="hi">Cancellation &#2325;&#2376;&#2360;&#2375; &#2361;&#2379;&#2340;&#2366; &#2361;&#2376;</span>
+    <span class="en">How Cancellations Happen</span>
   </div>
   <h2>
-    <span class="lang-hi">&#2350;&#2370;&#2354; &#2346;&#2376;&#2335;&#2352;&#2381;&#2344; &mdash; &#2325;&#2381;&#2351;&#2366; &#2335;&#2370;&#2335; &#2352;&#2361;&#2366; &#2361;&#2376;?</span>
-    <span class="lang-en hidden">The Core Pattern &mdash; What Is Breaking?</span>
+    <span class="hi">&#2340;&#2369;&#2352;&#2306;&#2340; Cancel &#2360;&#2375; &#2354;&#2375;&#2325;&#2352; 100+ &#2348;&#2366;&#2352; system &#2360;&#2375; &#2354;&#2337;&#2364;&#2344;&#2375; &#2340;&#2325;</span>
+    <span class="en">From Instant Cancel to 100+ System Interactions</span>
   </h2>
 
-  <div class="card" style="border-left: 4px solid var(--accent);">
-    <p class="pain-body">
-      <span class="lang-hi">The system was designed for a world where supply is always available and partners always cooperate. That world doesn't exist. When supply fails, the system has no circuit breaker, no honest communication, and no manual override. Customers are left in a void of vague messages and unanswered calls until they give up.</span>
-      <span class="lang-en hidden">The system was designed for a world where supply is always available and partners always cooperate. That world doesn't exist. When supply fails, the system has no circuit breaker, no honest communication, and no manual override. Customers are left in a void of vague messages and unanswered calls until they give up.</span>
+  <div class="spectrum-box">
+    <p style="font-size:15px; color:var(--text-muted); line-height:1.7;">
+      <span class="hi">&#2325;&#2369;&#2331; customers booking &#2325;&#2375; &#2340;&#2369;&#2352;&#2306;&#2340; &#2348;&#2366;&#2342; cancel &#2325;&#2352; &#2342;&#2375;&#2340;&#2375; &#2361;&#2376;&#2306; &#2348;&#2367;&#2344;&#2366; &#2325;&#2367;&#2360;&#2368; system interaction &#2325;&#2375;&#2404; &#2342;&#2370;&#2360;&#2352;&#2368; &#2340;&#2352;&#2347; &mdash; &#2325;&#2369;&#2331; customers system &#2325;&#2375; &#2360;&#2366;&#2341; 100+ &#2348;&#2366;&#2352; interact &#2325;&#2352;&#2340;&#2375; &#2361;&#2376;&#2306; (&#2332;&#2376;&#2360;&#2375; 47 CC calls, 66 chats) &#2324;&#2352; &#2347;&#2367;&#2352; &#2349;&#2368; &#2361;&#2366;&#2352; &#2350;&#2366;&#2344;&#2325;&#2352; cancel &#2325;&#2352; &#2342;&#2375;&#2340;&#2375; &#2361;&#2376;&#2306;&#2404; &#2311;&#2360; analysis &#2350;&#2375;&#2306; &#2361;&#2350;&#2344;&#2375; &#2311;&#2344; &#2360;&#2348; customer journeys &#2325;&#2379; condense &#2325;&#2352;&#2325;&#2375; data &#2344;&#2367;&#2325;&#2366;&#2354;&#2366; &#2361;&#2376;&#2404;</span>
+      <span class="en">Some customers cancel immediately after booking with zero system interaction. On the other end &mdash; some interact with the system 100+ times (e.g. 47 CC calls, 66 back-and-forth chats) and still give up. This analysis condenses all these customer journeys into data.</span>
     </p>
+    <div class="spectrum-bar"><div class="spectrum-fill"></div></div>
+    <div class="spectrum-labels">
+      <span>
+        <span class="hi">&#2340;&#2369;&#2352;&#2306;&#2340; Cancel</span>
+        <span class="en">Instant Cancel</span>
+      </span>
+      <span>
+        <span class="hi">&#2325;&#2369;&#2331; &#2342;&#2367;&#2344; wait</span>
+        <span class="en">Days of waiting</span>
+      </span>
+      <span>
+        <span class="hi">&#2361;&#2347;&#2381;&#2340;&#2379;&#2306; &#2340;&#2325; &#2354;&#2337;&#2364;&#2366;&#2312;</span>
+        <span class="en">Weeks of struggle</span>
+      </span>
+      <span>
+        <span class="hi">100+ interactions</span>
+        <span class="en">100+ interactions</span>
+      </span>
+    </div>
 
-    <div class="overlap-note" style="margin-top:16px">
-      <span class="lang-hi">Note: 6 pain points &#2346;&#2352; &#2332;&#2379; structured data &#2360;&#2375; measure &#2361;&#2379; &#2360;&#2325;&#2340;&#2375; &#2361;&#2376;&#2306;, customers &#2324;&#2360;&#2340;&#2344; 1.8 pain points &#2319;&#2325; &#2360;&#2366;&#2341; experience &#2325;&#2352;&#2340;&#2375; &#2361;&#2376;&#2306;&#2404; &#2351;&#2375; issues independent &#2344;&#2361;&#2368;&#2306; &#2361;&#2376;&#2306;, &#2351;&#2375; stack &#2361;&#2379;&#2325;&#2352; cascading frustration &#2348;&#2344;&#2340;&#2375; &#2361;&#2376;&#2306;&#2404;</span>
-      <span class="lang-en hidden">Note: On the six pain points we can measure from structured data, customers experience an average of 1.8 simultaneously. These issues are not independent, they stack into cascading frustration.</span>
+    <div class="sub-toggle" onclick="toggleSub(this)" style="margin-top:20px">
+      <span>
+        <span class="hi">&#2319;&#2325; customer &#2325;&#2368; &#2346;&#2370;&#2352;&#2368; journey &#2342;&#2375;&#2326;&#2375;&#2306; &mdash; 15 CX calls, 39 partners notified, 4 status checks</span>
+        <span class="en">See a full customer journey &mdash; 15 CX calls, 39 partners notified, 4 status checks</span>
+      </span>
+      <span class="arr">&#9660;</span>
+    </div>
+    <div class="sub-body">
+      <div style="padding:16px 0 0">
+        <div class="journey">
+          <div class="j-step"><div class="j-track"><div class="j-dot start"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-01-31]</span> Customer made 1st CX team call</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot start"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-02]</span> Booked. System proposed slot for 03-03-2026. Customer confirmed. Tech assigned: Puneet</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot fail"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-03]</span> Partner declined. New tech assigned: Brijesh. New slot proposed for 05-03-2026</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-04]</span> Customer confirmed slot for 05-03-2026</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot fail"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-05]</span> Two techs assigned (Lakshay, Vikas). Partner declined again</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot fail"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-06]</span> New slot proposed &rarr; Customer confirmed &rarr; Partner declined same day. Tech assigned: Khushi</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-08]</span> System proposed slot for 08-03-2026</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-09]</span> Customer confirmed slot for 09-03-2026</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-13]</span> System proposed slot for 13-03-2026</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-14]</span> Customer confirmed slot for 14-03-2026</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot fail"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-14]</span> Slot breached: 14-03-2026 passed, tech didn't come</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot end"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-15]</span> Customer cancelled booking</div></div>
+          <div class="j-step"><div class="j-track"><div class="j-dot"></div></div><div class="j-text"><span class="j-date">[2026-04-01]</span> Customer made last CX call (total 15 CX calls)</div></div>
+        </div>
+        <div class="j-summary">
+          <strong>Summary:</strong> 15 total CX team calls; 0 customer&rarr;tech (0 connected), 7 tech&rarr;customer (3 connected); 39 partners notified, 9 accepted, 7 declined; 4 status checks in chat; 9 bot 'samajh nahi aaya' responses
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- ============ SECTION 3: TOP PAIN POINTS ============ -->
+<div class="divider"></div>
+
+<!-- ===== CORE INSIGHT ===== -->
 <div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 3</span>
-    <span class="lang-en hidden">SECTION 3</span>
+  <div class="eyebrow">
+    <span class="hi">&#2350;&#2370;&#2354; &#2348;&#2366;&#2340;</span>
+    <span class="en">The Core Insight</span>
   </div>
   <h2>
-    <span class="lang-hi">&#2346;&#2381;&#2352;&#2350;&#2369;&#2326; Pain Points &mdash; &#2327;&#2381;&#2352;&#2366;&#2361;&#2325; &#2325;&#2368; &#2310;&#2357;&#2366;&#2332;&#2364;</span>
-    <span class="lang-en hidden">Top Pain Points &mdash; The Voice of the Customer</span>
+    <span class="hi">System &#2325;&#2375; &#2346;&#2366;&#2360; failure handle &#2325;&#2352;&#2344;&#2375; &#2325;&#2366; &#2325;&#2379;&#2312; &#2340;&#2352;&#2368;&#2325;&#2366; &#2344;&#2361;&#2368;&#2306; &#2361;&#2376;</span>
+    <span class="en">The System Has No Way to Handle Failure</span>
   </h2>
-
-  <div class="pain-card">
-    <div class="pain-header">
-      <div class="pain-title">
-        <span class="lang-hi">#1 &mdash; "Nobody came to install" &mdash; Delay / Waiting / No-show</span>
-        <span class="lang-en hidden">#1 &mdash; "Nobody came to install" &mdash; Delay / Waiting / No-show</span>
-      </div>
-      <div class="pain-stat">327 (57%)</div>
-    </div>
-    <div class="pain-body">
-      <span class="lang-hi">Tech No-shows &ge; 1, OR Failure Classification contains "delay"/"no-show", OR Customer-stated Reason mentions delay/&#2342;&#2375;&#2352;/late/waiting</span>
-      <span class="lang-en hidden">Tech No-shows &ge; 1, OR Failure Classification contains "delay"/"no-show", OR Customer-stated Reason mentions delay/&#2342;&#2375;&#2352;/late/waiting</span>
-    </div>
-  </div>
-
-  <div class="pain-card">
-    <div class="pain-header">
-      <div class="pain-title">
-        <span class="lang-hi">#2 &mdash; "I kept calling but nobody helped" &mdash; CX Failure</span>
-        <span class="lang-en hidden">#2 &mdash; "I kept calling but nobody helped" &mdash; CX Failure</span>
-      </div>
-      <div class="pain-stat">278 (48%)</div>
-    </div>
-    <div class="pain-body">CX Calls &ge; 3</div>
-  </div>
-
-  <div class="pain-card">
-    <div class="pain-header">
-      <div class="pain-title">
-        <span class="lang-hi">#3 &mdash; "My date was confirmed but they didn't show" &mdash; Broken Promises</span>
-        <span class="lang-en hidden">#3 &mdash; "My date was confirmed but they didn't show" &mdash; Broken Promises</span>
-      </div>
-      <div class="pain-stat">168 (29%)</div>
-    </div>
-    <div class="pain-body">Slot Breaches &ge; 1 OR Tech No-shows &ge; 1</div>
-  </div>
-
-  <div class="pain-card">
-    <div class="pain-header">
-      <div class="pain-title">
-        <span class="lang-hi">#4 &mdash; "No one even picked up the booking" &mdash; Supply Void</span>
-        <span class="lang-en hidden">#4 &mdash; "No one even picked up the booking" &mdash; Supply Void</span>
-      </div>
-      <div class="pain-stat">129 (22%)</div>
-    </div>
-    <div class="pain-body">Partners Notified > 0 AND Partners Accepted = 0, OR Partners Declined &ge; Partners Notified with 0 accepts, OR Failure Classification: Zero Partner Interest / All Partners Declined / No Partner Picked Up</div>
-  </div>
-
-  <div class="pain-card">
-    <div class="pain-header">
-      <div class="pain-title">
-        <span class="lang-hi">#5 &mdash; "Told me unserviceable after I paid" &mdash; Post-Payment Surprise</span>
-        <span class="lang-en hidden">#5 &mdash; "Told me unserviceable after I paid" &mdash; Post-Payment Surprise</span>
-      </div>
-      <div class="pain-stat">79 (14%)</div>
-    </div>
-    <div class="pain-body">Failure Classification contains "unserviceable"/"not serviceable"/"G2 fail"</div>
-  </div>
-
-  <div class="pain-card">
-    <div class="pain-header">
-      <div class="pain-title">
-        <span class="lang-hi">#6 &mdash; "The charges are too much" &mdash; Price / Cost Friction</span>
-        <span class="lang-en hidden">#6 &mdash; "The charges are too much" &mdash; Price / Cost Friction</span>
-      </div>
-      <div class="pain-stat">49 (8%)</div>
-    </div>
-    <div class="pain-body">Customer-stated Reason mentions price/cost/charges/&#2350;&#2361;&#2306;&#2327;&#2366;/expensive/deposit, OR Product Flow State contains "Security Deposit"/"Deposit"/"Recharge"/"Pricing"</div>
-  </div>
-
-  <div class="pain-card" style="border-left-color: var(--text-muted);">
-    <div class="pain-header">
-      <div class="pain-title">
-        <span class="lang-hi">#7 &mdash; Others &mdash; Switched to competitor, quality concerns etc.</span>
-        <span class="lang-en hidden">#7 &mdash; Others &mdash; Switched to competitor, quality concerns etc.</span>
-      </div>
-      <div class="pain-stat" style="background:var(--bg-alt); color:var(--text-muted); border-color:var(--border);">17 (3%)</div>
-    </div>
-  </div>
+  <p class="section-lead">
+    <span class="hi">&#2332;&#2348; process &#2350;&#2375;&#2306; &#2325;&#2369;&#2331; &#2327;&#2354;&#2340; &#2361;&#2379;&#2340;&#2366; &#2361;&#2376; &mdash; &#2332;&#2376;&#2360;&#2375; technician &#2344;&#2361;&#2368;&#2306; &#2310;&#2340;&#2366;, partner decline &#2325;&#2352;&#2340;&#2366; &#2361;&#2376;, &#2351;&#2366; slot breach &#2361;&#2379;&#2340;&#2366; &#2361;&#2376; &mdash; &#2340;&#2379; system &#2325;&#2375; &#2346;&#2366;&#2360; &#2325;&#2379;&#2312; circuit breaker &#2344;&#2361;&#2368;&#2306; &#2361;&#2376;, &#2325;&#2379;&#2312; &#2360;&#2381;&#2346;&#2359;&#2381;&#2335; communication &#2344;&#2361;&#2368;&#2306; &#2361;&#2376;, &#2324;&#2352; &#2325;&#2379;&#2312; recovery path &#2344;&#2361;&#2368;&#2306; &#2361;&#2376;&#2404; Customer &#2325;&#2379; vague messages &#2324;&#2352; unanswered calls &#2325;&#2375; &#2348;&#2368;&#2330; &#2331;&#2379;&#2337;&#2364; &#2342;&#2367;&#2351;&#2366; &#2332;&#2366;&#2340;&#2366; &#2361;&#2376;&#2404;</span>
+    <span class="en">When something goes wrong in the process &mdash; technician doesn't show up, partner declines, or a slot is breached &mdash; the system has no circuit breaker, no clear communication, and no recovery path. The customer is left in a void of vague messages and unanswered calls.</span>
+  </p>
 </div>
 
-<!-- ============ SECTION 4: DELAY TYPES ============ -->
+<div class="divider"></div>
+
+<!-- ===== PAIN POINTS (THE STORY) ===== -->
 <div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 4</span>
-    <span class="lang-en hidden">SECTION 4</span>
+  <div class="eyebrow">
+    <span class="hi">Root Causes</span>
+    <span class="en">Root Causes</span>
   </div>
   <h2>
-    <span class="lang-hi">Service Fulfilment Failure &mdash; &#2340;&#2368;&#2344; &#2346;&#2381;&#2352;&#2325;&#2366;&#2352;</span>
-    <span class="lang-en hidden">Service Fulfilment Failure &mdash; Three Types</span>
+    <span class="hi">Customers &#2325;&#2381;&#2351;&#2366; &#2325;&#2361;&#2340;&#2375; &#2361;&#2376;&#2306; &mdash; &#2324;&#2352; system &#2350;&#2375;&#2306; &#2325;&#2381;&#2351;&#2366; &#2335;&#2370;&#2335;&#2366; &#2361;&#2376;</span>
+    <span class="en">What Customers Say &mdash; and What's Broken in the System</span>
   </h2>
-
-  <div class="card">
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>
-            <span class="lang-hi">Delay Type</span>
-            <span class="lang-en hidden">Delay Type</span>
-          </th>
-          <th>Definition</th>
-          <th>Proxy</th>
-          <th>
-            <span class="lang-hi">Customers</span>
-            <span class="lang-en hidden">Customers</span>
-          </th>
-          <th>%</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Type A: Expectation Mismatch</strong></td>
-          <td>
-            <span class="lang-hi">Cancelled quickly, 0 system failures, wanted it faster</span>
-            <span class="lang-en hidden">Cancelled quickly, 0 system failures, wanted it faster</span>
-          </td>
-          <td>0 failures, speed 0-6h or 6-12h</td>
-          <td><strong>~90</strong></td>
-          <td>~16%</td>
-        </tr>
-        <tr>
-          <td><strong>Type B: Broken Promise</strong></td>
-          <td>
-            <span class="lang-hi">Had a date confirmed, tech didn't show or partner declined</span>
-            <span class="lang-en hidden">Had a date confirmed, tech didn't show or partner declined</span>
-          </td>
-          <td>1+ slot breach or tech no-show</td>
-          <td><strong>~165</strong></td>
-          <td>~29%</td>
-        </tr>
-        <tr class="highlight-row">
-          <td><strong>Type C: Accumulated System Failure</strong></td>
-          <td>
-            <span class="lang-hi">Waited days/weeks, multiple failures, repeated loop</span>
-            <span class="lang-en hidden">Waited days/weeks, multiple failures, repeated loop</span>
-          </td>
-          <td>2+ failures OR 3+ days with system engagement</td>
-          <td><strong>~260</strong></td>
-          <td>~45%</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ============ SECTION 5: CX INTERACTION DATA ============ -->
-<div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 5</span>
-    <span class="lang-en hidden">SECTION 5</span>
-  </div>
-  <h2>
-    <span class="lang-hi">CX Interaction Data</span>
-    <span class="lang-en hidden">CX Interaction Data</span>
-  </h2>
-
-  <div class="card">
-    <table class="data-table">
-      <thead>
-        <tr><th>Metric</th><th>Count</th><th>% of 578</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Called CC at least once</td><td><strong>412</strong></td><td>71%</td></tr>
-        <tr><td>Called CC 3+ times</td><td><strong>278</strong></td><td>48%</td></tr>
-        <tr><td>Called CC 5+ times (heavy callers)</td><td><strong>183</strong></td><td>32%</td></tr>
-        <tr><td>Called CC 10+ times</td><td><strong>64</strong></td><td>11%</td></tr>
-        <tr class="highlight-row"><td>Most extreme case</td><td><strong>47 CC calls</strong></td><td>&mdash;</td></tr>
-        <tr><td>Tried calling tech/partner</td><td><strong>175</strong></td><td>30%</td></tr>
-        <tr><td>Partner calls unanswered</td><td><strong>75%</strong></td><td>&mdash;</td></tr>
-        <tr class="highlight-row"><td>CC save rate</td><td><strong>0%</strong></td><td>&mdash;</td></tr>
-        <tr><td>CC itself requested cancellation</td><td><strong>39</strong></td><td>7%</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="card" style="margin-top:16px">
-    <table class="data-table">
-      <thead>
-        <tr><th>Metric</th><th>Count</th><th>% of 578</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Reached security deposit stage and cancelled</td><td><strong>32</strong></td><td>6%</td></tr>
-        <tr><td>Stated reason mentions price/cost</td><td><strong>21</strong></td><td>4%</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ============ SECTION 6: STRUCTURAL ROOT CAUSES ============ -->
-<div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 6</span>
-    <span class="lang-en hidden">SECTION 6</span>
-  </div>
-  <h2>
-    <span class="lang-hi">Structural Root Causes &mdash; &#2360;&#2367;&#2360;&#2381;&#2335;&#2350; &#2350;&#2375;&#2306; &#2325;&#2381;&#2351;&#2366; &#2335;&#2370;&#2335;&#2366; &#2361;&#2376;?</span>
-    <span class="lang-en hidden">Structural Root Causes &mdash; What Is Broken in the System?</span>
-  </h2>
-  <p class="section-desc">
-    <span class="lang-hi">&#2361;&#2352; root cause chain observable failure &#2360;&#2375; &#2358;&#2369;&#2352;&#2370; &#2361;&#2379;&#2340;&#2368; &#2361;&#2376; &#2324;&#2352; "why" &#2346;&#2370;&#2331;&#2340;&#2375; &#2361;&#2369;&#2319; system design decision &#2340;&#2325; &#2346;&#2361;&#2369;&#2305;&#2330;&#2340;&#2368; &#2361;&#2376;&#2404;</span>
-    <span class="lang-en hidden">Each chain starts from the observable failure and asks 'why' until it lands on a system design decision.</span>
+  <p class="section-lead">
+    <span class="hi">&#2361;&#2352; pain point &#2346;&#2352; click &#2325;&#2352;&#2375;&#2306; &mdash; customer &#2325;&#2368; &#2310;&#2357;&#2366;&#2332;&#2364; &#2360;&#2375; &#2358;&#2369;&#2352;&#2370; &#2361;&#2379;&#2325;&#2352; structural root cause &#2340;&#2325; &#2325;&#2366; &#2346;&#2370;&#2352;&#2366; why-chain &#2342;&#2375;&#2326;&#2375;&#2306;&#2404;</span>
+    <span class="en">Click each pain point &mdash; trace from the customer's voice all the way to the structural root cause.</span>
   </p>
 
-  <!-- RC A: Expectation Mismatch -->
-  <div class="collapsible-header" onclick="toggleCollapse(this)">
-    <span>
-      <span class="lang-hi">Root Cause A &mdash; "Thoda jaldi nahi ho sakta kya?" (Expectation Mismatch) &mdash; ~90 (~16%)</span>
-      <span class="lang-en hidden">Root Cause A &mdash; "Can't it be done faster?" (Expectation Mismatch) &mdash; ~90 (~16%)</span>
-    </span>
-    <span class="arrow">&#9660;</span>
-  </div>
-  <div class="collapsible-body">
-    <div class="collapsible-inner">
-      <div class="rca-chain">
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot failure"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label failure">OBSERVABLE FAILURE</div>
-            <div class="rca-text">~90 customers (~16%) cancelled within 12h with zero system failures. They simply expected the install to happen faster than the system delivered.</div>
-          </div>
+  <!-- ====== PAIN POINT 1: Service Fulfilment Failure ====== -->
+  <div class="cause-card">
+    <div class="cause-header" onclick="toggleCause(this)">
+      <div>
+        <div class="cause-rank">
+          <span class="hi">&#2360;&#2348;&#2360;&#2375; &#2348;&#2337;&#2364;&#2366; Pain Point</span>
+          <span class="en">Biggest Pain Point</span>
         </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because installation did not happen within the speed they expected.</div>
-          </div>
+        <div class="cause-quote">
+          <span class="hi">&ldquo;&#2325;&#2379;&#2312; &#2310;&#2351;&#2366; &#2344;&#2361;&#2368;&#2306; &#2354;&#2327;&#2366;&#2344;&#2375;... &#2348;&#2361;&#2369;&#2340; wait &#2325;&#2352; &#2354;&#2367;&#2351;&#2366;&rdquo;</span>
+          <span class="en">&ldquo;Nobody came to install... waited too long&rdquo;</span>
         </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because their mental model is same-day or within-hours activation, benchmarked against Jio, Airtel and local cable.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because the booking journey did not anchor the expected install TAT upfront.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because the expected installation timeline is not being communicated enough or repeatedly.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot root"></div></div>
-          <div class="rca-content">
-            <div class="rca-label root">STRUCTURAL ROOT CAUSE</div>
-            <div class="rca-root-box">
-              <p>Pre-booking expectation setting on installation TAT is weak. The system takes a booking without ever forcing the customer to confirm they understand and accept the install TAT.</p>
-              <div class="classification">Classification: System Design Flaw</div>
-            </div>
-          </div>
-        </div>
+        <div class="cause-subtitle">Service Fulfilment Failure &mdash; Delay, No-show, Broken Promises</div>
       </div>
-      <div class="evidence-placeholder">
-        <div class="icon">&#128206;</div>
-        <span class="lang-hi">Evidence &mdash; &#2332;&#2354;&#2381;&#2342; &#2361;&#2368; &#2351;&#2361;&#2366;&#2305; &#2332;&#2379;&#2337;&#2364;&#2366; &#2332;&#2366;&#2319;&#2327;&#2366; (chats, CC scripts, flows, customer journey examples)</span>
-        <span class="lang-en hidden">Evidence &mdash; will be added here soon (chats, CC scripts, flows, customer journey examples)</span>
+      <div class="cause-right">
+        <div class="cause-badge">327 (57%)</div>
+        <div class="cause-arrow">&#9660;</div>
       </div>
     </div>
-  </div>
+    <div class="cause-body">
+      <div class="cause-inner">
 
-  <!-- RC B: Broken Promise -->
-  <div class="collapsible-header" onclick="toggleCollapse(this)">
-    <span>
-      <span class="lang-hi">Root Cause B &mdash; "Koi aaya nahi lagane" (Broken Promise) &mdash; ~165 (~29%)</span>
-      <span class="lang-en hidden">Root Cause B &mdash; "Nobody came to install" (Broken Promise) &mdash; ~165 (~29%)</span>
-    </span>
-    <span class="arrow">&#9660;</span>
-  </div>
-  <div class="collapsible-body">
-    <div class="collapsible-inner">
-      <div class="rca-chain">
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot failure"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label failure">OBSERVABLE FAILURE</div>
-            <div class="rca-text">~165 customers (~29%) had a date confirmed and the tech did not arrive (slot breach or partner decline).</div>
+        <!-- Type A -->
+        <div class="type-card">
+          <div class="type-label">Type A</div>
+          <div class="type-title">
+            <span class="hi">&ldquo;Thoda jaldi nahi ho sakta kya?&rdquo; &mdash; Expectation Mismatch</span>
+            <span class="en">&ldquo;Can't it be done faster?&rdquo; &mdash; Expectation Mismatch</span>
+          </div>
+          <div class="type-stat">~90 customers (~16%)</div>
+
+          <div class="rca-chain">
+            <div class="rca-step"><div class="rca-track"><div class="rca-node obs"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag obs">Observable Failure</div><div class="rca-text">~90 customers (~16%) cancelled within 12h with zero system failures. They simply expected the install to happen faster than the system delivered.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because installation did not happen within the speed they expected.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because their mental model is same-day or within-hours activation, benchmarked against Jio, Airtel and local cable.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because the booking journey did not anchor the expected install TAT upfront.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because the expected installation timeline is not being communicated enough or repeatedly.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node root"></div></div><div class="rca-content"><div class="rca-tag root">Structural Root Cause</div><div class="root-box"><p>Pre-booking expectation setting on installation TAT is weak. The system takes a booking without ever forcing the customer to confirm they understand and accept the install TAT.</p><div class="tag">Classification: System Design Flaw</div></div></div></div>
+          </div>
+
+          <div class="evidence">
+            <div class="evidence-title">Evidence</div>
+            <div class="evidence-item"><strong>Customer calls:</strong> 3/10 customers who we called stated expectations of early installation</div>
+            <div class="evidence-item"><strong>Chat verbatims:</strong></div>
+            <div class="verbatim">"aaj nhi lag sakta", "thoda argent hai", "tomorrow morning", "Hamara order cancel kar do Paisa wapasi De Do" &mdash; after 2-3 installation messages</div>
+            <div class="evidence-item"><strong>Current flow:</strong> We inform the customer of the installation expectation (2-3 days) once booking is confirmed, post when the customer asks to check status.</div>
+            <div class="verbatim">&#2344;&#2306;&#2348;&#2352; &#2360;&#2375;&#2357; &#2361;&#2379; &#2327;&#2351;&#2366; &#2361;&#2376;, &#2361;&#2350; &#2310;&#2346;&#2325;&#2379; &#2325;&#2377;&#2354; &#2325;&#2352;&#2325;&#2375; &#2344;&#2375;&#2335; &#2354;&#2327;&#2357;&#2366;&#2344;&#2375; &#2325;&#2366; &#2342;&#2367;&#2344; &#2346;&#2325;&#2381;&#2325;&#2366; &#2325;&#2352;&#2375;&#2306;&#2327;&#2375;. Customer clicks on &#2350;&#2375;&#2352;&#2366; &#2360;&#2381;&#2335;&#2375;&#2335;&#2360; &#2348;&#2340;&#2366;&#2323;, and then &mdash; &#2310;&#2346;&#2325;&#2368; &#2348;&#2369;&#2325;&#2367;&#2306;&#2327; &#2325;&#2344;&#2381;&#2347;&#2352;&#2381;&#2350; &#2361;&#2379; &#2330;&#2369;&#2325;&#2368; &#2361;&#2376;&#2404; &#2310;&#2350; &#2340;&#2380;&#2352; &#2346;&#2352; &#2344;&#2375;&#2335; &#2360;&#2375;&#2335;&#2309;&#2346; 2&ndash;3 &#2342;&#2367;&#2344;&#2379;&#2306; &#2350;&#2375;&#2306; &#2361;&#2379; &#2332;&#2366;&#2340;&#2366; &#2361;&#2376;&#2404;</div>
           </div>
         </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because a promise was broken and hence trust.</div>
+
+        <!-- Type B -->
+        <div class="type-card">
+          <div class="type-label">Type B</div>
+          <div class="type-title">
+            <span class="hi">&ldquo;Koi aaya nahi lagane&rdquo; &mdash; Broken Promise</span>
+            <span class="en">&ldquo;Nobody came to install&rdquo; &mdash; Broken Promise</span>
+          </div>
+          <div class="type-stat">~165 customers (~29%)</div>
+
+          <div class="rca-chain">
+            <div class="rca-step"><div class="rca-track"><div class="rca-node obs"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag obs">Observable Failure</div><div class="rca-text">~165 customers (~29%) had a date confirmed and the tech did not arrive (slot breach or partner decline).</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because a promise was broken and hence trust.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because the committed slot was not fulfilled (Design wise).</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because the partner / technician did not execute after confirming. (Cross Theme 3)</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node root"></div></div><div class="rca-content"><div class="rca-tag root">Structural Root Cause</div><div class="root-box"><p>Communication that technician will not come with proper reason not done properly.</p><div class="tag">Classification: System Design Flaw</div></div></div></div>
+          </div>
+
+          <div class="evidence">
+            <div class="evidence-title">Evidence</div>
+            <div class="evidence-item"><strong>Slot breach messaging:</strong> Message triggered at 12am of next day when we breach a slot. The entire day the customer keeps asking for status (late evening as well), and then the message that it is not happening gets triggered at 12am, start of the new day.</div>
+            <div class="evidence-item"><strong>Current process:</strong> Customer clicks on Check my status, gets:</div>
+            <div class="verbatim">13-03-2026 &#2325;&#2379; Sameer &#2310;&#2346;&#2325;&#2375; &#2328;&#2352; &#2346;&#2352; &#2344;&#2375;&#2335; &#2360;&#2375;&#2335;&#2309;&#2346; &#2325;&#2375; &#2354;&#2367;&#2319; &#2310;&#2319;&#2306;&#2327;&#2375;&#2404;</div>
+            <div class="evidence-item">The entire day passes. Then at 12am:</div>
+            <div class="verbatim">&#2325;&#2367;&#2360;&#2368; &#2325;&#2366;&#2352;&#2339; &#2360;&#2375; &#2310;&#2332; Sameer &#2310;&#2346;&#2325;&#2375; &#2328;&#2352; &#2346;&#2352; &#2344;&#2375;&#2335; &#2354;&#2327;&#2366;&#2344;&#2375; &#2344;&#2361;&#2368;&#2306; &#2310; &#2346;&#2366;&#2319;&#2404; &#2325;&#2371;&#2346;&#2351;&#2366; &#2325;&#2369;&#2331; &#2360;&#2350;&#2351; &#2340;&#2325; &#2311;&#2306;&#2340;&#2332;&#2364;&#2366;&#2352; &#2325;&#2352;&#2375;&#2306; &#2361;&#2350; &#2332;&#2354;&#2381;&#2342; &#2360;&#2375; &#2332;&#2354;&#2381;&#2342; &#2310;&#2346;&#2325;&#2366; &#2344;&#2375;&#2335; &#2330;&#2366;&#2354;&#2370; &#2325;&#2352;&#2357;&#2366;&#2344;&#2375; &#2325;&#2368; &#2325;&#2379;&#2358;&#2367;&#2358; &#2350;&#2375;&#2306; &#2361;&#2376;&#2306;&#2404;</div>
+            <div class="evidence-item"><strong>Problem:</strong> Vague message &mdash; slot breach message with no clear ETA.</div>
           </div>
         </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because the committed slot was not fulfilled (Design wise).</div>
+
+        <!-- Type C -->
+        <div class="type-card">
+          <div class="type-label">Type C</div>
+          <div class="type-title">
+            <span class="hi">&ldquo;Bohot der se wait kar rahe hai aur kuch nahi ho raha hai&rdquo; &mdash; Accumulated System Failure</span>
+            <span class="en">&ldquo;Been waiting forever, nothing is happening&rdquo; &mdash; Accumulated System Failure</span>
+          </div>
+          <div class="type-stat">~260 customers (~45%)</div>
+
+          <div class="rca-chain">
+            <div class="rca-step"><div class="rca-track"><div class="rca-node obs"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag obs">Observable Failure</div><div class="rca-text">127 customers (22%) cancelled after 2+ failures. 9 customers experienced 5+ failures with an average wait of 258 hours. After each failure they were routed back into the same scheduling loop.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because repeated failed attempts exhausted trust and patience.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because after each failure the customer re-entered the same scheduling loop.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because failed cases are not differentiated from first-time installs.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because the workflow is optimised for standard installs, not failure recovery.</div></div></div>
+            <div class="rca-step"><div class="rca-track"><div class="rca-node root"></div></div><div class="rca-content"><div class="rca-tag root">Structural Root Cause</div><div class="root-box"><p>Repeated-failure customers are routed back into BAU instead of a recovery workflow. The system has no notion of a 'failed case' that needs different handling.</p><div class="tag">Classification: System Design Flaw</div></div></div></div>
+          </div>
+
+          <div class="evidence">
+            <div class="evidence-title">Evidence</div>
+            <div class="evidence-item"><strong>Sample customer journey:</strong> See the full journey in the &ldquo;How Cancellations Happen&rdquo; section above &mdash; 15 CX calls, 39 partners notified, 4 status checks, 9 bot &lsquo;samajh nahi aaya&rsquo; responses, spanning Jan 31 to Apr 1.</div>
           </div>
         </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because the partner / technician did not execute after confirming. (Cross Theme 3)</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot root"></div></div>
-          <div class="rca-content">
-            <div class="rca-label root">STRUCTURAL ROOT CAUSE</div>
-            <div class="rca-root-box">
-              <p>Communication that technician will not come with proper reason not done properly.</p>
-              <div class="classification">Classification: System Design Flaw</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="evidence-placeholder">
-        <div class="icon">&#128206;</div>
-        <span class="lang-hi">Evidence &mdash; &#2332;&#2354;&#2381;&#2342; &#2361;&#2368; &#2351;&#2361;&#2366;&#2305; &#2332;&#2379;&#2337;&#2364;&#2366; &#2332;&#2366;&#2319;&#2327;&#2366;</span>
-        <span class="lang-en hidden">Evidence &mdash; will be added here soon</span>
+
       </div>
     </div>
   </div>
 
-  <!-- RC C: Accumulated System Failure -->
-  <div class="collapsible-header" onclick="toggleCollapse(this)">
-    <span>
-      <span class="lang-hi">Root Cause C &mdash; "Bohot der se wait kar rahe hai aur kuch nahi ho raha hai" (Accumulated System Failure) &mdash; ~260 (~45%)</span>
-      <span class="lang-en hidden">Root Cause C &mdash; "Been waiting forever, nothing is happening" (Accumulated System Failure) &mdash; ~260 (~45%)</span>
-    </span>
-    <span class="arrow">&#9660;</span>
-  </div>
-  <div class="collapsible-body">
-    <div class="collapsible-inner">
-      <div class="rca-chain">
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot failure"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label failure">OBSERVABLE FAILURE</div>
-            <div class="rca-text">127 customers (22%) cancelled after 2+ failures. 9 customers experienced 5+ failures with an average wait of 258 hours. After each failure they were routed back into the same scheduling loop.</div>
-          </div>
+  <!-- ====== PAIN POINT 2: Fragmented Information Architecture ====== -->
+  <div class="cause-card">
+    <div class="cause-header" onclick="toggleCause(this)">
+      <div>
+        <div class="cause-rank">Pain Point 2</div>
+        <div class="cause-quote">
+          <span class="hi">&ldquo;&#2360;&#2361;&#2368; information &#2344;&#2361;&#2368;&#2306; &#2350;&#2367;&#2354; &#2346;&#2366; &#2352;&#2361;&#2368; &#2361;&#2376;&rdquo;</span>
+          <span class="en">&ldquo;Can't get the right information&rdquo;</span>
         </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because repeated failed attempts exhausted trust and patience.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because after each failure the customer re-entered the same scheduling loop.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because failed cases are not differentiated from first-time installs.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because the workflow is optimised for standard installs, not failure recovery.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot root"></div></div>
-          <div class="rca-content">
-            <div class="rca-label root">STRUCTURAL ROOT CAUSE</div>
-            <div class="rca-root-box">
-              <p>Repeated-failure customers are routed back into BAU instead of a recovery workflow. The system has no notion of a 'failed case' that needs different handling.</p>
-              <div class="classification">Classification: System Design Flaw</div>
-            </div>
-          </div>
-        </div>
+        <div class="cause-subtitle">Fragmented Information Architecture &mdash; No Single Source of Truth</div>
       </div>
-      <div class="evidence-placeholder">
-        <div class="icon">&#128206;</div>
-        <span class="lang-hi">Evidence &mdash; &#2332;&#2354;&#2381;&#2342; &#2361;&#2368; &#2351;&#2361;&#2366;&#2305; &#2332;&#2379;&#2337;&#2364;&#2366; &#2332;&#2366;&#2319;&#2327;&#2366;</span>
-        <span class="lang-en hidden">Evidence &mdash; will be added here soon</span>
+      <div class="cause-right">
+        <div class="cause-badge">412 (71%) called CC</div>
+        <div class="cause-arrow">&#9660;</div>
+      </div>
+    </div>
+    <div class="cause-body">
+      <div class="cause-inner">
+
+        <div class="rca-chain">
+          <div class="rca-step"><div class="rca-track"><div class="rca-node obs"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag obs">Observable Failure</div><div class="rca-text">412 (71%) called CC at least once. 183 (32%) were heavy callers (5+ calls). One customer called 47 times. CC save rate: 0%.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because they could not understand what was happening with their booking.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because they did not receive a clear and reliable status update.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because CC, bot and technician do not reflect the same piece of information at the same time.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because partner-side status updates and execution milestones are not being synced to customer-facing systems in real time.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node root"></div></div><div class="rca-content"><div class="rca-tag root">Structural Root Cause</div><div class="root-box"><p>There is no single source of truth for the customer's install state. Every channel &mdash; chatbot, CC, tech &mdash; sees a partial view, so the customer cannot get a reliable answer from anyone.</p><div class="tag">Classification: System Design Flaw</div></div></div></div>
+        </div>
+
+        <div class="evidence">
+          <div class="evidence-title">Evidence</div>
+          <div class="evidence-item"><strong>Sample Customer Journey:</strong></div>
+          <div class="journey">
+            <div class="j-step"><div class="j-track"><div class="j-dot start"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-06]</span> Booked</div></div>
+            <div class="j-step"><div class="j-track"><div class="j-dot"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-07]</span> Slot proposed &rarr; Partner declined &rarr; Customer confirmed &rarr; Tech assigned: Amam</div></div>
+            <div class="j-step"><div class="j-track"><div class="j-dot"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-07]</span> 1st CX call. Tech-customer calls begin (12 customer&rarr;tech, 11 tech&rarr;customer, 942s talk)</div></div>
+            <div class="j-step"><div class="j-track"><div class="j-dot fail"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-08]</span> New slot &rarr; New techs (ajay, Suraj Kumar) &rarr; Tech no-show: Suraj Kumar &rarr; Partner declined</div></div>
+            <div class="j-step"><div class="j-track"><div class="j-dot fail"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-09]</span> New slot &rarr; Tech assigned: Vinay &rarr; Partner declined &rarr; New tech: sushil</div></div>
+            <div class="j-step"><div class="j-track"><div class="j-dot fail"></div><div class="j-wire"></div></div><div class="j-text"><span class="j-date">[2026-03-10]</span> Tech no-show</div></div>
+            <div class="j-step"><div class="j-track"><div class="j-dot end"></div></div><div class="j-text"><span class="j-date">[2026-03-12]</span> Last CX call (total 13 CX calls)</div></div>
+          </div>
+          <div class="j-summary">
+            <strong>Summary:</strong> 13 total CX calls; 12 customer&rarr;tech (3 connected), 11 tech&rarr;customer (7 connected); 34 partners notified, 4 accepted, 7 declined; 2 status checks; 4 bot 'samajh nahi aaya' responses
+          </div>
+          <div class="evidence-item" style="margin-top:12px"><strong>Case Summary:</strong> Technician said "nahi laga payenge" but call centre is saying "we are working on it" &mdash; contradictory information. The customer received multiple calls from different technicians restarting his journey.</div>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <!-- RC D: Fragmented Information Architecture -->
-  <div class="collapsible-header" onclick="toggleCollapse(this)">
-    <span>
-      <span class="lang-hi">Root Cause D &mdash; "Koi madad nahi kar paa raha" (Fragmented Information Architecture)</span>
-      <span class="lang-en hidden">Root Cause D &mdash; "Nobody can help me" (Fragmented Information Architecture)</span>
-    </span>
-    <span class="arrow">&#9660;</span>
-  </div>
-  <div class="collapsible-body">
-    <div class="collapsible-inner">
-      <div class="rca-chain">
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot failure"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label failure">OBSERVABLE FAILURE</div>
-            <div class="rca-text">412 (71%) called CC at least once. 183 (32%) were heavy callers (5+ calls). One customer called 47 times. CC save rate: 0%.</div>
-          </div>
+  <!-- ====== PAIN POINT 3: Serviceability Failures ====== -->
+  <div class="cause-card">
+    <div class="cause-header" onclick="toggleCause(this)">
+      <div>
+        <div class="cause-rank">Pain Point 3</div>
+        <div class="cause-quote">
+          <span class="hi">&ldquo;Ab bata raha hai ki nahi lag payega?&rdquo;</span>
+          <span class="en">&ldquo;Now they're saying it can't be done?&rdquo;</span>
         </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because they could not understand what was happening with their booking.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because they did not receive a clear and reliable status update.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because CC, bot and technician do not reflect the same piece of information at the same time.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because partner-side status updates and execution milestones are not being synced to customer-facing systems in real time.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot root"></div></div>
-          <div class="rca-content">
-            <div class="rca-label root">STRUCTURAL ROOT CAUSE</div>
-            <div class="rca-root-box">
-              <p>There is no single source of truth for the customer's install state. Every channel &mdash; chatbot, CC, tech &mdash; sees a partial view, so the customer cannot get a reliable answer from anyone.</p>
-              <div class="classification">Classification: System Design Flaw</div>
-            </div>
-          </div>
-        </div>
+        <div class="cause-subtitle">Post-Payment Serviceability Failures</div>
       </div>
-      <div class="evidence-placeholder">
-        <div class="icon">&#128206;</div>
-        <span class="lang-hi">Evidence &mdash; &#2332;&#2354;&#2381;&#2342; &#2361;&#2368; &#2351;&#2361;&#2366;&#2305; &#2332;&#2379;&#2337;&#2364;&#2366; &#2332;&#2366;&#2319;&#2327;&#2366;</span>
-        <span class="lang-en hidden">Evidence &mdash; will be added here soon</span>
+      <div class="cause-right">
+        <div class="cause-badge">19 (3.3%)</div>
+        <div class="cause-arrow">&#9660;</div>
+      </div>
+    </div>
+    <div class="cause-body">
+      <div class="cause-inner">
+        <div class="rca-chain">
+          <div class="rca-step"><div class="rca-track"><div class="rca-node obs"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag obs">Observable Failure</div><div class="rca-text">19 cancellations (3.3%) are driven by post-booking serviceability failures, where the G2 check fails after the booking fee is paid. Customers are then routed through the location revalidation path, often requiring repeated address confirmation and extended wait times before serviceability can be confirmed, leading to eventual cancellation.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div></div><div class="rca-content"><div class="rca-tag why">Cross Theme</div><div class="rca-text">(Cross Theme 1 &mdash; Serviceability & Booking Eligibility)</div></div></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- RC E: Serviceability Failures -->
-  <div class="collapsible-header" onclick="toggleCollapse(this)">
-    <span>
-      <span class="lang-hi">Root Cause E &mdash; "Ab bata raha hai ki nahi lag payega?" (Serviceability Failures) &mdash; 19 (3.3%)</span>
-      <span class="lang-en hidden">Root Cause E &mdash; "Now they're saying it can't be done?" (Serviceability Failures) &mdash; 19 (3.3%)</span>
-    </span>
-    <span class="arrow">&#9660;</span>
-  </div>
-  <div class="collapsible-body">
-    <div class="collapsible-inner">
-      <div class="rca-chain">
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot failure"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label failure">OBSERVABLE FAILURE</div>
-            <div class="rca-text">19 cancellations (3.3%) are driven by post-booking serviceability failures, where the G2 check fails after the booking fee is paid. Customers are then routed through the location revalidation path, often requiring repeated address confirmation and extended wait times before serviceability can be confirmed, leading to eventual cancellation.</div>
-          </div>
+  <!-- ====== PAIN POINT 4: Price Shock ====== -->
+  <div class="cause-card">
+    <div class="cause-header" onclick="toggleCause(this)">
+      <div>
+        <div class="cause-rank">Pain Point 4</div>
+        <div class="cause-quote">
+          <span class="hi">&ldquo;300 rupay aur dene padenge? Yeh toh pehle nahi pata tha&rdquo;</span>
+          <span class="en">&ldquo;300 more? Nobody told me this before&rdquo;</span>
         </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">CROSS THEME</div>
-            <div class="rca-text">(Cross Theme 1 &mdash; Serviceability & Booking Eligibility)</div>
-          </div>
-        </div>
+        <div class="cause-subtitle">Price Shock &mdash; Late Disclosure of Full Payable Amount</div>
       </div>
-      <div class="evidence-placeholder">
-        <div class="icon">&#128206;</div>
-        <span class="lang-hi">Evidence &mdash; &#2332;&#2354;&#2381;&#2342; &#2361;&#2368; &#2351;&#2361;&#2366;&#2305; &#2332;&#2379;&#2337;&#2364;&#2366; &#2332;&#2366;&#2319;&#2327;&#2366;</span>
-        <span class="lang-en hidden">Evidence &mdash; will be added here soon</span>
+      <div class="cause-right">
+        <div class="cause-badge">32 (6%)</div>
+        <div class="cause-arrow">&#9660;</div>
       </div>
     </div>
-  </div>
+    <div class="cause-body">
+      <div class="cause-inner">
+        <div class="rca-chain">
+          <div class="rca-step"><div class="rca-track"><div class="rca-node obs"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag obs">Observable Failure</div><div class="rca-text">32 customers (6%) cancelled at the security deposit stage. Verbatims and customer call recordings show consistent surprise at the &#8377;100 booking fee + &#8377;300 security deposit + plan amount stack, with technicians often being the point at which the full payable amount is communicated or reinforced.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because the upfront payable amount felt too high at the moment of disclosure.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because the Rs 300 SD and total payable was discovered late in the journey, after the Rs 100 booking payment.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node why"></div><div class="rca-wire"></div></div><div class="rca-content"><div class="rca-tag why">Why?</div><div class="rca-text">Because the full payable amount is not communicated repeatedly across the customer journey before the security deposit stage.</div></div></div>
+          <div class="rca-step"><div class="rca-track"><div class="rca-node root"></div></div><div class="rca-content"><div class="rca-tag root">Structural Root Cause</div><div class="root-box"><p>The full payable amount is not communicated repeatedly across the customer journey before the security deposit stage.</p><div class="tag">Classification: System Design Flaw</div></div></div></div>
+        </div>
 
-  <!-- RC F: Price Shock -->
-  <div class="collapsible-header" onclick="toggleCollapse(this)">
-    <span>
-      <span class="lang-hi">Root Cause F &mdash; "300 rupay aur dene padenge? Yeh toh pehle nahi pata tha" (Price Shock) &mdash; 32 (6%)</span>
-      <span class="lang-en hidden">Root Cause F &mdash; "300 more? Nobody told me this before" (Price Shock) &mdash; 32 (6%)</span>
-    </span>
-    <span class="arrow">&#9660;</span>
-  </div>
-  <div class="collapsible-body">
-    <div class="collapsible-inner">
-      <div class="rca-chain">
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot failure"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label failure">OBSERVABLE FAILURE</div>
-            <div class="rca-text">32 customers (6%) cancelled at the security deposit stage. Verbatims and customer call recordings show consistent surprise at the &#8377;100 booking fee + &#8377;300 security deposit + plan amount stack, with technicians often being the point at which the full payable amount is communicated or reinforced.</div>
+        <div class="evidence">
+          <div class="evidence-title">Evidence</div>
+          <div class="evidence-item"><strong>User Insights study:</strong> Rohit (technician) is the main informant for PayG plans &mdash; not the app or pre-booking flows.</div>
+          <div class="evidence-item"><strong>App design flows:</strong>
+            <br>i. Pre-booking information &mdash; we tell once right before he pays the booking fee, and the second time when the technician arrives for installation. Nothing in between.
+            <br>ii. Once technician arrives &mdash; that's when the full amount is disclosed.
           </div>
         </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because the upfront payable amount felt too high at the moment of disclosure.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because the Rs 300 SD and total payable was discovered late in the journey, after the Rs 100 booking payment.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot why"></div><div class="rca-line"></div></div>
-          <div class="rca-content">
-            <div class="rca-label why">WHY?</div>
-            <div class="rca-text">Because the full payable amount is not communicated repeatedly across the customer journey before the security deposit stage.</div>
-          </div>
-        </div>
-        <div class="rca-step">
-          <div class="rca-track"><div class="rca-dot root"></div></div>
-          <div class="rca-content">
-            <div class="rca-label root">STRUCTURAL ROOT CAUSE</div>
-            <div class="rca-root-box">
-              <p>The full payable amount is not communicated repeatedly across the customer journey before the security deposit stage.</p>
-              <div class="classification">Classification: System Design Flaw</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="evidence-placeholder">
-        <div class="icon">&#128206;</div>
-        <span class="lang-hi">Evidence &mdash; &#2332;&#2354;&#2381;&#2342; &#2361;&#2368; &#2351;&#2361;&#2366;&#2305; &#2332;&#2379;&#2337;&#2364;&#2366; &#2332;&#2366;&#2319;&#2327;&#2366;</span>
-        <span class="lang-en hidden">Evidence &mdash; will be added here soon</span>
+
       </div>
     </div>
   </div>
-</div>
 
-<!-- ============ SECTION 7: CX CALL LEARNINGS ============ -->
-<div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 7</span>
-    <span class="lang-en hidden">SECTION 7</span>
-  </div>
-  <h2>
-    <span class="lang-hi">CX Call Learnings &mdash; &#2325;&#2381;&#2351;&#2366; &#2360;&#2369;&#2344;&#2366;&#2312; &#2342;&#2367;&#2351;&#2366; calls &#2350;&#2375;&#2306;</span>
-    <span class="lang-en hidden">CX Call Learnings &mdash; What We Heard in Calls</span>
-  </h2>
-  <p class="section-desc">
-    <span class="lang-hi">50+ CC, partner & technician calls &#2360;&#2369;&#2344;&#2325;&#2352; &#2351;&#2375; patterns &#2344;&#2367;&#2325;&#2354;&#2375;:</span>
-    <span class="lang-en hidden">After listening to 50+ CC, partner & technician calls, these patterns emerged:</span>
-  </p>
+</div><!-- /section -->
 
-  <div class="cx-insight">
-    <strong>Customer frustration:</strong> He couldn't figure out if he made the payment or not. And since he was not getting any call so he felt "kuch toh gadbad hai"
-  </div>
-  <div class="cx-insight">
-    <strong>Technician unreachable:</strong> Customer couldn't get through the technician and wanted to request faster installation. 3 times call was transferred. CX need to ensure they call on the technician number.
-  </div>
-  <div class="cx-insight">
-    <strong>Price shock:</strong> "You have to pay 100 then 300 then 2 day free and then plan amount &mdash; what is this? Why so? Why should I pay so much."
-  </div>
-  <div class="cx-insight">
-    <strong>Heavy caller (9 calls, 4 days waiting):</strong> He kept getting dates and CX says "jo bhi chat mein likha hai wahi hai." Every call they feel the next date is for real but when it is not honored then their trust is broken.
-  </div>
-  <div class="cx-insight">
-    <strong>Heavy caller (7 days, no setup):</strong> Setup date was 22nd and then it was not. At CX we tell on CC that it is delayed and new date will be confirmed. No answer or clarity again. Same loop. He eventually asked to cancel.
-  </div>
-  <div class="cx-insight">
-    <strong>Heavy caller (technician not picking up):</strong> "Maine 10 times kar diya hai download nothing is happening." We say "I'm checking the status" and then the same thing.
-  </div>
-  <div class="cx-insight">
-    <strong>Auto-refund trigger:</strong> "Give me a date by when this will happen" &mdash; the moment the CX said "you will get auto refund" it seemed he was convinced of cancelling.
-  </div>
-</div>
-
-<!-- ============ SECTION 8: METHODOLOGY ============ -->
-<div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 8</span>
-    <span class="lang-en hidden">SECTION 8</span>
-  </div>
-  <h2>
-    <span class="lang-hi">&#2325;&#2366;&#2352;&#2381;&#2351;&#2346;&#2381;&#2352;&#2339;&#2366;&#2354;&#2368; &mdash; &#2361;&#2350;&#2344;&#2375; &#2351;&#2375; &#2325;&#2376;&#2360;&#2375; &#2325;&#2367;&#2351;&#2366;</span>
-    <span class="lang-en hidden">Methodology &mdash; How We Did This</span>
-  </h2>
-
-  <div class="method-steps">
-    <div class="method-step">
-      <div class="method-num">1</div>
-      <div class="method-text"><strong>Chat Journey Analysis:</strong> All 578 message journeys classified by pain point themes using keyword + pattern matching across 7 theme categories</div>
-    </div>
-    <div class="method-step">
-      <div class="method-num">2</div>
-      <div class="method-text"><strong>Stated Reason Classification:</strong> All cancellation reasons (Hindi/Hinglish) translated and grouped into 13 theme categories</div>
-    </div>
-    <div class="method-step">
-      <div class="method-num">3</div>
-      <div class="method-text"><strong>Interaction Pattern Profiling:</strong> Customers segmented by CX calling behavior, tech interaction, failure count, and cancellation speed</div>
-    </div>
-    <div class="method-step">
-      <div class="method-num">4</div>
-      <div class="method-text"><strong>5-Why Root Cause Analysis:</strong> Each pain point traced to system-level root causes through iterative "why" questioning with data evidence at each level</div>
-    </div>
-    <div class="method-step">
-      <div class="method-num">5</div>
-      <div class="method-text"><strong>Root Cause Sizing:</strong> Each root cause quantified by affected customers, with overlap matrix showing interconnections</div>
-    </div>
-    <div class="method-step">
-      <div class="method-num">6</div>
-      <div class="method-text"><strong>Listening to 50+ CC and Partner CX calls.</strong></div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:20px">
-    <h3 style="font-size:16px; margin-bottom:12px; font-weight:700;">
-      <span class="lang-hi">Data Sources</span>
-      <span class="lang-en hidden">Data Sources</span>
-    </h3>
-    <table class="data-table">
-      <tbody>
-        <tr><td><strong>Customer Cancellations Chat Analysis</strong></td><td>578 customers with complete chatbot message journeys, interaction counts, stated reasons</td></tr>
-        <tr><td><strong>Cancellation RCA Master</strong></td><td>578 customers with CX call counts, partner call data, recording URLs, funnel stages</td></tr>
-        <tr><td><strong>Reasons x Count x Exact Messages</strong></td><td>578 customers with flow state classifications, failure counts, partner/tech interaction details</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ============ SECTION 9: EXTRA DATA POINTS ============ -->
-<div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 9</span>
-    <span class="lang-en hidden">SECTION 9</span>
-  </div>
-  <h2>
-    <span class="lang-hi">&#2309;&#2340;&#2367;&#2352;&#2367;&#2325;&#2381;&#2340; Data Points</span>
-    <span class="lang-en hidden">Extra Data Points</span>
-  </h2>
-
-  <div class="collapsible-header" onclick="toggleCollapse(this)">
-    <span>
-      <span class="lang-hi">Failure Classification x Cancellation Speed (&#2357;&#2367;&#2360;&#2381;&#2340;&#2371;&#2340; &#2340;&#2366;&#2354;&#2367;&#2325;&#2366;)</span>
-      <span class="lang-en hidden">Failure Classification x Cancellation Speed (Detailed Table)</span>
-    </span>
-    <span class="arrow">&#9660;</span>
-  </div>
-  <div class="collapsible-body">
-    <div class="collapsible-inner" style="overflow-x:auto;">
-      <table class="data-table" style="font-size:12px; white-space:nowrap;">
-        <thead>
-          <tr>
-            <th>Failure Classification</th>
-            <th>0-6h</th><th>6-12h</th><th>12-24h</th><th>1-2d</th><th>2-3d</th><th>3-7d</th><th>7+d</th><th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>1. Unserviceable</td><td>0</td><td>0</td><td>4</td><td>3</td><td>5</td><td>7</td><td>0</td><td><strong>19</strong></td></tr>
-          <tr><td>2. No partner picked up</td><td>8</td><td>3</td><td>3</td><td>6</td><td>27</td><td>50</td><td>7</td><td><strong>104</strong></td></tr>
-          <tr><td>2. Unserviceable &rarr; No partner picked up</td><td>3</td><td>0</td><td>2</td><td>2</td><td>4</td><td>6</td><td>3</td><td><strong>20</strong></td></tr>
-          <tr><td>3. Cancelled before progress</td><td>14</td><td>2</td><td>1</td><td>4</td><td>0</td><td>0</td><td>0</td><td><strong>22</strong></td></tr>
-          <tr><td>4. Slot confirmed, no tech</td><td>12</td><td>1</td><td>4</td><td>1</td><td>2</td><td>0</td><td>2</td><td><strong>22</strong></td></tr>
-          <tr><td>5. Tech assigned, no failure</td><td>33</td><td>2</td><td>23</td><td>15</td><td>2</td><td>1</td><td>2</td><td><strong>78</strong></td></tr>
-          <tr><td>6. Tech arrived (various)</td><td>4</td><td>0</td><td>3</td><td>7</td><td>5</td><td>6</td><td>7</td><td><strong>32</strong></td></tr>
-          <tr><td>7. 1 failed attempt (all types)</td><td>9</td><td>4</td><td>17</td><td>29</td><td>26</td><td>40</td><td>15</td><td><strong>141</strong></td></tr>
-          <tr class="highlight-row"><td>8a. 2-3 failed attempts</td><td>0</td><td>1</td><td>4</td><td>13</td><td>15</td><td>47</td><td>25</td><td><strong>106</strong></td></tr>
-          <tr><td>8b. 4-5 failed attempts</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>3</td><td>6</td><td><strong>9</strong></td></tr>
-          <tr><td>8c. 6+ failed attempts</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>2</td><td>1</td><td><strong>3</strong></td></tr>
-          <tr><td>Pre-G2 / Rebooker / Other</td><td>3</td><td>0</td><td>1</td><td>3</td><td>0</td><td>4</td><td>1</td><td><strong>13</strong></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ============ SECTION 10: CONTEXT ============ -->
-<div class="section">
-  <div class="section-label">
-    <span class="lang-hi">&#2326;&#2306;&#2337; 10</span>
-    <span class="lang-en hidden">SECTION 10</span>
-  </div>
-  <h2>
-    <span class="lang-hi">Task Force Context</span>
-    <span class="lang-en hidden">Task Force Context</span>
-  </h2>
-  <div class="card">
-    <p class="pain-body" style="margin-bottom:16px">
-      <span class="lang-hi">At ~35% install after booking fee, this is a system-level failure. The funnel analysis (Feb 20&ndash;Mar 25 cohort, 3,062 bookings) identified 4 distinct failure mechanisms. Each needs an owner who goes deep on that mechanism end-to-end &mdash; diagnose, root-cause, propose fix &mdash; not just contribute their functional slice.</span>
-      <span class="lang-en hidden">At ~35% install after booking fee, this is a system-level failure. The funnel analysis (Feb 20&ndash;Mar 25 cohort, 3,062 bookings) identified 4 distinct failure mechanisms. Each needs an owner who goes deep on that mechanism end-to-end &mdash; diagnose, root-cause, propose fix &mdash; not just contribute their functional slice.</span>
-    </p>
-    <table class="data-table">
-      <thead><tr><th>Theme</th><th>Owner</th><th>Focus</th></tr></thead>
-      <tbody>
-        <tr><td>Theme 1</td><td>Dhruv + Maanas</td><td>Serviceability &mdash; system accepting bookings it cannot fulfil</td></tr>
-        <tr><td>Theme 2</td><td>Abhinav + Vaibhav J</td><td>Partner acceptance &mdash; demand-supply matching at micro level</td></tr>
-        <tr><td>Theme 3</td><td>Hary + Divi</td><td>Tech non-arrival &mdash; largest drop in funnel</td></tr>
-        <tr class="highlight-row"><td>Theme 4</td><td>Shiva + Ashish</td><td>Post-booking comms & UX &mdash; why customers cancel</td></tr>
-      </tbody>
-    </table>
-    <div class="data-source">Install Funnel Task Force &mdash; 7-Day Sprint | 4 Themes | 30 Mar 2026 | Data source: Snowflake via Metabase</div>
-  </div>
-</div>
-
-<!-- ============ FOOTER ============ -->
 <div class="footer">
-  Install Funnel Task Force &mdash; Theme 4: Post-Booking Comms & UX | Root Cause Analysis | April 2026<br>
-  Owners: Shiva + Ashish | Data-led, evidence-backed
+  Theme 4: Post-Booking Comms & UX | Root Cause Analysis | April 2026<br>
+  Owners: Shiva + Ashish
 </div>
 
-</div><!-- /container -->
+</div><!-- /wrap -->
 
 <script>
-let currentLang = 'hi';
-let currentTheme = 'light';
-
 function setLang(lang) {
-  currentLang = lang;
-  document.querySelectorAll('.lang-hi').forEach(el => el.classList.toggle('hidden', lang !== 'hi'));
-  document.querySelectorAll('.lang-en').forEach(el => el.classList.toggle('hidden', lang !== 'en'));
+  document.documentElement.setAttribute('data-lang', lang);
   document.getElementById('btn-hi').classList.toggle('active', lang === 'hi');
   document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  localStorage.setItem('rca-lang', lang);
 }
-
 function toggleTheme() {
-  currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-  document.body.setAttribute('data-theme', currentTheme === 'dark' ? 'dark' : '');
-  document.getElementById('btn-theme').innerHTML = currentTheme === 'dark' ? '&#9788; Light' : '&#9790; Dark';
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('btn-theme').innerHTML = t === 'dark' ? '&#9788;' : '&#9790;';
+  localStorage.setItem('rca-theme', t);
+}
+function toggleCause(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
+function toggleSub(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
 }
 
-function toggleCollapse(header) {
-  header.classList.toggle('open');
-  const body = header.nextElementSibling;
-  body.classList.toggle('open');
-}
+// Reading progress
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const s = window.scrollY;
+  document.getElementById('progress').style.width = (h > 0 ? (s / h * 100) : 0) + '%';
+});
+
+// Restore preferences
+const savedLang = localStorage.getItem('rca-lang');
+const savedTheme = localStorage.getItem('rca-theme');
+if (savedLang) setLang(savedLang);
+if (savedTheme) { document.documentElement.setAttribute('data-theme', savedTheme); document.getElementById('btn-theme').innerHTML = savedTheme === 'dark' ? '&#9788;' : '&#9790;'; }
 </script>
 </body>
 </html>
