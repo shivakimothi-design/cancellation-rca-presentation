@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slot Breach Response — Framework-Governed Version</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=Noto+Sans+Devanagari:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --surface-2: #f5f5f5;
+    --text: #0f0f0f;
+    --text-muted: #5f5f5f;
+    --text-soft: #888;
+    --border: #e8e8e8;
+    --pink: #D9008D;
+    --pink-bg: rgba(217,0,141,0.06);
+    --pink-bg-strong: #FFF0F8;
+    --red: #E53935;
+    --orange: #FF9800;
+    --green: #43A047;
+    --blue: #1E88E5;
+    --gray-before: #9E9E9E;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04);
+    --shadow-md: 0 4px 24px rgba(0,0,0,.08);
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+  [data-theme="dark"] {
+    --bg: #0a0a0a;
+    --surface: #161616;
+    --surface-2: #1f1f1f;
+    --text: #f5f5f5;
+    --text-muted: #a0a0a0;
+    --text-soft: #666;
+    --border: #2a2a2a;
+    --pink: #FF1FA5;
+    --pink-bg: rgba(255,31,165,0.08);
+    --pink-bg-strong: #1a0a14;
+    --gray-before: #666;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.2), 0 4px 16px rgba(0,0,0,.15);
+    --shadow-md: 0 4px 24px rgba(0,0,0,.3);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', 'Noto Sans Devanagari', sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  #progress {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: var(--pink); z-index: 200; width: 0%;
+    transition: width .1s linear;
+  }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(16px);
+  }
+  .topbar-brand { display: flex; align-items: center; gap: 10px; }
+  .topbar-logo {
+    width: 28px; height: 28px; background: var(--pink);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 13px;
+  }
+  .topbar-label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+  .pill-btn {
+    padding: 5px 14px; border-radius: 24px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-muted); font-size: 12px;
+    font-weight: 600; cursor: pointer; transition: all .2s;
+    font-family: inherit;
+  }
+  .pill-btn:hover { border-color: var(--pink); color: var(--pink); }
+
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  .hero { padding: 72px 0 40px; text-align: center; }
+  .hero-eyebrow {
+    display: inline-block; padding: 5px 16px; border-radius: 24px;
+    background: var(--pink-bg); color: var(--pink); font-size: 12px;
+    font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    margin-bottom: 20px; border: 1px solid var(--pink);
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 46px; font-weight: 400; line-height: 1.15;
+    letter-spacing: -1px; margin-bottom: 20px;
+  }
+  .hero-lead {
+    font-size: 17px; color: var(--text-muted); max-width: 640px;
+    margin: 0 auto; line-height: 1.7;
+  }
+
+  /* Situation callout */
+  .situation {
+    text-align: center; padding: 40px 0 16px;
+  }
+  .situation .qtext {
+    font-family: 'DM Serif Display', 'Noto Sans Devanagari', serif;
+    font-size: 24px; line-height: 1.35; color: var(--text);
+    max-width: 600px; margin: 0 auto 10px;
+  }
+  .situation .stat {
+    color: var(--pink); font-weight: 700; font-size: 15px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Section headers */
+  .section { padding: 56px 0 0; }
+  .eyebrow {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 10px;
+  }
+  .eyebrow.before { color: var(--gray-before); }
+  .eyebrow.after { color: var(--pink); }
+  .section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px; font-weight: 400; line-height: 1.25;
+    letter-spacing: -0.5px; margin-bottom: 16px;
+  }
+  .section-lead {
+    font-size: 16px; color: var(--text-muted); margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  /* BEFORE timeline */
+  .before-timeline {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 14px; margin: 24px 0 16px;
+  }
+  .tl-card {
+    background: var(--surface-2);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px 16px; text-align: center;
+    position: relative;
+  }
+  .tl-time {
+    display: inline-block; padding: 3px 10px; border-radius: 10px;
+    background: var(--gray-before); color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .tl-channels {
+    font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px;
+  }
+  .tl-note {
+    font-size: 12px; color: var(--text-soft);
+  }
+  .before-note {
+    margin-top: 14px; padding: 14px 18px;
+    background: rgba(229,57,53,0.04);
+    border-left: 3px solid var(--red);
+    border-radius: 0 10px 10px 0;
+    font-size: 14px; color: var(--text-muted); line-height: 1.6;
+  }
+  .before-note strong { color: var(--red); }
+
+  /* AFTER flow */
+  .after-flow { margin: 24px 0; }
+  .breach-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-left: 5px solid var(--pink);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+  }
+  .breach-card.b2 { border-left-color: #FF5722; background: linear-gradient(90deg, rgba(255,87,34,0.04) 0%, transparent 30%); }
+  .breach-card.b3 { border-left-color: var(--red); background: linear-gradient(90deg, rgba(229,57,53,0.06) 0%, transparent 30%); }
+
+  .breach-head {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .breach-num {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--pink); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px; flex-shrink: 0;
+  }
+  .breach-card.b2 .breach-num { background: #FF5722; }
+  .breach-card.b3 .breach-num { background: var(--red); }
+  .breach-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; font-weight: 400; line-height: 1.3; color: var(--text);
+    flex: 1; min-width: 200px;
+  }
+  .breach-tier {
+    padding: 5px 14px; border-radius: 14px;
+    background: var(--pink-bg); color: var(--pink);
+    font-weight: 700; font-size: 12px; border: 1px solid var(--pink);
+    white-space: nowrap;
+  }
+  .breach-card.b2 .breach-tier { background: rgba(255,87,34,0.1); color: #FF5722; border-color: #FF5722; }
+  .breach-card.b3 .breach-tier { background: rgba(229,57,53,0.1); color: var(--red); border-color: var(--red); }
+
+  .breach-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 14px; margin-top: 10px;
+  }
+  .breach-box {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+  }
+  .breach-box-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-soft);
+    margin-bottom: 6px;
+  }
+  .breach-box-val {
+    font-size: 13px; color: var(--text); line-height: 1.5; font-weight: 500;
+  }
+
+  .breach-msg {
+    margin-top: 14px; padding: 14px 18px;
+    background: var(--pink-bg-strong);
+    border: 1px solid var(--pink);
+    border-radius: var(--radius-sm);
+    font-size: 14px; color: var(--text);
+    line-height: 1.6; font-style: italic;
+  }
+  .breach-card.b2 .breach-msg { background: rgba(255,87,34,0.06); border-color: #FF5722; }
+  .breach-card.b3 .breach-msg { background: rgba(229,57,53,0.06); border-color: var(--red); }
+
+  .breach-key {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: transparent;
+    border-top: 1px dashed var(--border);
+    padding-top: 14px;
+    font-size: 13px; color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .breach-key strong { color: var(--text); }
+
+  /* Exit diamond (between breach 1 and 2) */
+  .exit-gate {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; padding: 12px 0;
+  }
+  .exit-diamond {
+    background: var(--green); color: #fff;
+    padding: 10px 24px; border-radius: 30px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.3px;
+  }
+  .exit-text {
+    font-size: 12px; color: var(--text-soft); text-align: center;
+  }
+
+  /* Comparison */
+  .compare-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px; margin: 32px 0;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .compare-table {
+    width: 100%; border-collapse: collapse; min-width: 580px;
+  }
+  .compare-table th {
+    text-align: left; padding: 16px 18px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-soft);
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-table th.before-col { color: var(--gray-before); }
+  .compare-table th.after-col { color: var(--pink); }
+  .compare-table td {
+    padding: 14px 18px; font-size: 14px; line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td:first-child {
+    font-weight: 600; color: var(--text); white-space: nowrap;
+  }
+  .compare-table .cell-before { color: var(--text-muted); }
+  .compare-table .cell-after { color: var(--text); }
+  .compare-table .cell-after strong { color: var(--pink); }
+
+  /* Key differences */
+  .diffs {
+    display: grid; grid-template-columns: repeat(2, 1fr);
+    gap: 14px; margin-top: 24px;
+  }
+  .diff-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .diff-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px; color: var(--pink); line-height: 1;
+    margin-bottom: 8px;
+  }
+  .diff-label {
+    font-size: 15px; font-weight: 700; color: var(--text);
+    margin-bottom: 6px; line-height: 1.35;
+  }
+  .diff-body {
+    font-size: 13px; color: var(--text-muted); line-height: 1.6;
+  }
+
+  /* Why it matters */
+  .why-wrap {
+    background: var(--pink-bg-strong);
+    border: 1px solid var(--pink);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-top: 24px;
+  }
+  .why-wrap h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; font-weight: 400; color: var(--pink);
+    margin-bottom: 14px;
+  }
+  .why-wrap ul { padding-left: 20px; }
+  .why-wrap li {
+    margin-bottom: 10px; font-size: 14px; color: var(--text);
+    line-height: 1.6;
+  }
+  .why-wrap li strong { color: var(--pink); }
+
+  .divider { height: 1px; background: var(--border); margin: 56px 0; }
+
+  .footer {
+    text-align: center; padding: 48px 24px;
+    color: var(--text-soft); font-size: 12px;
+    border-top: 1px solid var(--border); margin-top: 56px;
+  }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 18px; }
+    .hero h1 { font-size: 30px; }
+    .section h2 { font-size: 24px; }
+    .situation .qtext { font-size: 20px; }
+    .before-timeline { grid-template-columns: 1fr; }
+    .breach-grid { grid-template-columns: 1fr; }
+    .breach-card { padding: 22px 20px; }
+    .breach-title { font-size: 18px; }
+    .diffs { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">W</div>
+    <div class="topbar-label">Slot Breach &mdash; Before & After the Framework</div>
+  </div>
+  <div>
+    <button class="pill-btn" onclick="toggleTheme()">&#9790;</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Framework in action</div>
+  <h1>Slot Breach Response &mdash; Before & After the Framework</h1>
+  <p class="hero-lead">Same problem. Same data. Two very different responses. One was designed before the Customer Communication Framework existed. One is what the framework prescribes.</p>
+</div>
+
+<!-- SITUATION -->
+<div class="situation">
+  <div class="qtext">&ldquo;Technician didn&rsquo;t arrive on the confirmed date.&rdquo;</div>
+  <div class="stat">~29% of all self-initiated cancellations happen after this exact moment.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- BEFORE -->
+<div class="section">
+  <div class="eyebrow before">Before the framework &mdash; what was designed</div>
+  <h2>Three timed notifications, all identical</h2>
+  <p class="section-lead">The original design fires the same channel stack (push + WhatsApp) at fixed intervals after the breach: T0, T+24 hours, and T+48 hours. Same tier. Same format. Same message pattern. The LCO/partner side is notified in parallel.</p>
+
+  <div class="before-timeline">
+    <div class="tl-card">
+      <div class="tl-time">T0</div>
+      <div class="tl-channels">Push + WhatsApp</div>
+      <div class="tl-note">At moment of breach</div>
+    </div>
+    <div class="tl-card">
+      <div class="tl-time">T+24 HR</div>
+      <div class="tl-channels">Push + WhatsApp</div>
+      <div class="tl-note">Same stack, 24 hours later</div>
+    </div>
+    <div class="tl-card">
+      <div class="tl-time">T+48 HR</div>
+      <div class="tl-channels">Push + WhatsApp</div>
+      <div class="tl-note">Same stack, 48 hours later</div>
+    </div>
+  </div>
+
+  <div class="before-note">
+    <strong>The framework&rsquo;s problem with this:</strong> it fires on a clock, regardless of what&rsquo;s happening. If a new slot is confirmed at T+6 hours, the T+24 and T+48 messages still go out &mdash; to an already-recovered customer. Same stack every time means no escalation when things get worse. And there&rsquo;s no point at which a human picks up the phone.
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- AFTER -->
+<div class="section">
+  <div class="eyebrow after">After the framework &mdash; what we should ship</div>
+  <h2>Event-driven, escalating by breach number</h2>
+  <p class="section-lead">The framework fires on state changes, not on the clock. Each missed slot is a separate event &mdash; with escalating severity, different copy, and a clear stopping point. Internally, Wiom may retry with a new partner up to three times. From the customer&rsquo;s side, each retry is a new promise that can be kept or broken.</p>
+
+  <div class="after-flow">
+
+    <!-- BREACH 1 -->
+    <div class="breach-card b1">
+      <div class="breach-head">
+        <div class="breach-num">1</div>
+        <div class="breach-title">First missed slot</div>
+        <div class="breach-tier">Tier 3</div>
+      </div>
+      <div class="breach-grid">
+        <div class="breach-box">
+          <div class="breach-box-label">Fires within</div>
+          <div class="breach-box-val">30 minutes of breach detection</div>
+        </div>
+        <div class="breach-box">
+          <div class="breach-box-label">Channels</div>
+          <div class="breach-box-val">Push + WhatsApp + SMS fallback</div>
+        </div>
+        <div class="breach-box">
+          <div class="breach-box-label">Must contain</div>
+          <div class="breach-box-val">Apology + what&rsquo;s happening now + specific time for next update</div>
+        </div>
+        <div class="breach-box">
+          <div class="breach-box-label">Owner</div>
+          <div class="breach-box-val">Head of Customer Experience</div>
+        </div>
+      </div>
+      <div class="breach-msg">
+        &ldquo;&#2310;&#2332; [tech_name] &#2310;&#2346;&#2325;&#2375; &#2328;&#2352; &#2344;&#2361;&#2368;&#2306; &#2310; &#2346;&#2366;&#2319;, &#2311;&#2360;&#2325;&#2375; &#2354;&#2367;&#2319; &#2361;&#2350; &#2350;&#2366;&#2347;&#2368; &#2330;&#2366;&#2361;&#2340;&#2375; &#2361;&#2376;&#2306;&#2404; &#2361;&#2350;&#2344;&#2375; &#2319;&#2325; &#2344;&#2319; &#2340;&#2325;&#2344;&#2368;&#2358;&#2367;&#2351;&#2344; [new_tech_name] &#2325;&#2379; &#2310;&#2346;&#2325;&#2366; &#2325;&#2366;&#2350; &#2342;&#2367;&#2351;&#2366; &#2361;&#2376;&#2404; &#2310;&#2346;&#2325;&#2368; &#2344;&#2312; &#2340;&#2366;&#2352;&#2368;&#2326; [new_date] &#2361;&#2376;&#2404;&rdquo;
+      </div>
+      <div class="breach-key">
+        <strong>Key rule:</strong> If no new slot is confirmed within 2 hours, the framework auto-escalates to Tier 4 (CX call). The customer never sits waiting in silence.
+      </div>
+    </div>
+
+    <!-- EXIT GATE -->
+    <div class="exit-gate">
+      <div class="exit-diamond">&#10003; IF NEW SLOT CONFIRMED &mdash; EVERYTHING STOPS</div>
+      <div class="exit-text">All further comms suppressed on this booking. No ping at T+24 or T+48. Silence = recovery is complete.</div>
+    </div>
+
+    <!-- BREACH 2 -->
+    <div class="breach-card b2">
+      <div class="breach-head">
+        <div class="breach-num">2</div>
+        <div class="breach-title">Second missed slot (internal retry also failed)</div>
+        <div class="breach-tier">Tier 3 &mdash; stronger</div>
+      </div>
+      <div class="breach-grid">
+        <div class="breach-box">
+          <div class="breach-box-label">What changes</div>
+          <div class="breach-box-val">Acknowledge this is the second failure. Surface refund option proactively.</div>
+        </div>
+        <div class="breach-box">
+          <div class="breach-box-label">Recovery flag</div>
+          <div class="breach-box-val">Booking flagged for named steward review</div>
+        </div>
+        <div class="breach-box">
+          <div class="breach-box-label">Lower-tier comms</div>
+          <div class="breach-box-val">Suppressed on this booking during active recovery</div>
+        </div>
+        <div class="breach-box">
+          <div class="breach-box-label">What the customer gains</div>
+          <div class="breach-box-val">The right to opt out &mdash; offered, not hidden</div>
+        </div>
+      </div>
+      <div class="breach-msg">
+        &ldquo;&#2342;&#2370;&#2360;&#2352;&#2368; &#2348;&#2366;&#2352; &#2349;&#2368; &#2344;&#2361;&#2368;&#2306; &#2361;&#2379; &#2346;&#2366;&#2351;&#2366;, &#2361;&#2350;&#2375;&#2306; &#2311;&#2360;&#2325;&#2375; &#2354;&#2367;&#2319; &#2348;&#2361;&#2369;&#2340; &#2326;&#2375;&#2342; &#2361;&#2376;&#2404; &#2361;&#2350;&#2344;&#2375; &#2310;&#2346;&#2325;&#2366; &#2325;&#2366;&#2350; &#2319;&#2325; &#2342;&#2370;&#2360;&#2352;&#2375; &#2346;&#2366;&#2352;&#2381;&#2335;&#2344;&#2352; &#2325;&#2379; priority &#2346;&#2352; &#2342;&#2367;&#2351;&#2366; &#2361;&#2376;&#2404; &#2310;&#2346;&#2325;&#2368; &#2344;&#2312; &#2340;&#2366;&#2352;&#2368;&#2326; [new_date] &#2361;&#2376;&#2404; &#2309;&#2327;&#2352; &#2310;&#2346; &#2348;&#2369;&#2325;&#2367;&#2306;&#2327; cancel &#2325;&#2352;&#2344;&#2366; &#2330;&#2366;&#2361;&#2375;&#2306;, &#2340;&#2379; &#2358;&#2369;&#2325;&#2381;&#2354; &#2325;&#2366; &#2346;&#2370;&#2352;&#2366; refund &#2350;&#2367;&#2354; &#2332;&#2366;&#2319;&#2327;&#2366;&#2404;&rdquo;
+      </div>
+      <div class="breach-key">
+        <strong>Key rule:</strong> By the second breach, the customer has earned the right to walk away with a refund &mdash; and we tell them that. Not hidden behind a support call. Not buried in a flow.
+      </div>
+    </div>
+
+    <!-- BREACH 3 -->
+    <div class="breach-card b3">
+      <div class="breach-head">
+        <div class="breach-num">3</div>
+        <div class="breach-title">Third missed slot &mdash; the text era ends</div>
+        <div class="breach-tier">Tier 4 &mdash; human call</div>
+      </div>
+      <div class="breach-grid">
+        <div class="breach-box">
+          <div class="breach-box-label">Outbound CX call</div>
+          <div class="breach-box-val">Within 2 hours of breach detection</div>
+        </div>
+        <div class="breach-box">
+          <div class="breach-box-label">Call must offer</div>
+          <div class="breach-box-val">Two options: one final priority attempt, OR full refund and cancellation today</div>
+        </div>
+        <div class="breach-box">
+          <div class="breach-box-label">Text stack</div>
+          <div class="breach-box-val">Still fires (push + WA + SMS) &mdash; customer has a written record before the call connects</div>
+        </div>
+        <div class="breach-box">
+          <div class="breach-box-label">Forbidden</div>
+          <div class="breach-box-val">Another silent retry. The choice is the customer&rsquo;s now.</div>
+        </div>
+      </div>
+      <div class="breach-msg">
+        &ldquo;&#2340;&#2368;&#2360;&#2352;&#2368; &#2348;&#2366;&#2352; &#2349;&#2368; &#2340;&#2325;&#2344;&#2368;&#2358;&#2367;&#2351;&#2344; &#2344;&#2361;&#2368;&#2306; &#2310; &#2346;&#2366;&#2319;&#2404; &#2351;&#2361; &#2361;&#2350;&#2366;&#2352;&#2368; &#2340;&#2352;&#2347; &#2360;&#2375; &#2348;&#2361;&#2369;&#2340; &#2348;&#2337;&#2364;&#2368; &#2330;&#2370;&#2325; &#2361;&#2376;&#2404; &#2361;&#2350; &#2310;&#2346;&#2325;&#2379; &#2309;&#2349;&#2368; &#2325;&#2377;&#2354; &#2325;&#2352;&#2375;&#2306;&#2327;&#2375; &mdash; &#2310;&#2346; &#2330;&#2366;&#2361;&#2375;&#2306; &#2340;&#2379; &#2344;&#2351;&#2366; setup &#2325;&#2352;&#2366;&#2319;&#2306;, &#2351;&#2366; &#2346;&#2370;&#2352;&#2366; &#8377;100 refund &#2354;&#2375;&#2325;&#2352; &#2348;&#2369;&#2325;&#2367;&#2306;&#2327; cancel &#2325;&#2352; &#2360;&#2325;&#2340;&#2375; &#2361;&#2376;&#2306;&#2404;&rdquo;
+      </div>
+      <div class="breach-key">
+        <strong>Key rule:</strong> Text cannot hold a relationship that has broken three times. A human makes the call. After breach #3, no new slot is proposed automatically &mdash; the customer decides.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- COMPARISON -->
+<div class="section">
+  <div class="eyebrow">Side by side</div>
+  <h2>What actually changes, line by line</h2>
+
+  <div class="compare-wrap">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="width:26%">ASPECT</th>
+          <th class="before-col" style="width:37%">BEFORE</th>
+          <th class="after-col" style="width:37%">AFTER</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Trigger logic</td>
+          <td class="cell-before">Time-based (0h / 24h / 48h)</td>
+          <td class="cell-after"><strong>Event-based</strong> (each breach is a new fire)</td>
+        </tr>
+        <tr>
+          <td>Escalation</td>
+          <td class="cell-before">None &mdash; same tier every time</td>
+          <td class="cell-after"><strong>By breach number</strong> (Tier 3 &rarr; Tier 3 stronger &rarr; Tier 4)</td>
+        </tr>
+        <tr>
+          <td>Channels</td>
+          <td class="cell-before">Push + WhatsApp (fixed)</td>
+          <td class="cell-after"><strong>Push + WA + SMS fallback</strong> (and a human call at breach 3)</td>
+        </tr>
+        <tr>
+          <td>SMS fallback</td>
+          <td class="cell-before">No &mdash; if WA fails, no insurance</td>
+          <td class="cell-after"><strong>Yes</strong> &mdash; fires 10 min after WA if delivery unconfirmed</td>
+        </tr>
+        <tr>
+          <td>Exit logic</td>
+          <td class="cell-before">None &mdash; all three messages fire regardless of state</td>
+          <td class="cell-after"><strong>Auto-exit on recovery</strong> &mdash; no comms to already-recovered customers</td>
+        </tr>
+        <tr>
+          <td>Human escalation</td>
+          <td class="cell-before">Never</td>
+          <td class="cell-after"><strong>Breach #3 &mdash; outbound CX call within 2 hours</strong></td>
+        </tr>
+        <tr>
+          <td>Customer&rsquo;s right to exit</td>
+          <td class="cell-before">Not offered</td>
+          <td class="cell-after"><strong>Refund option offered at Breach #2</strong>, proactively</td>
+        </tr>
+        <tr>
+          <td>Message content across breaches</td>
+          <td class="cell-before">Same &ldquo;please wait&rdquo; tone regardless of how bad it gets</td>
+          <td class="cell-after"><strong>Differentiated copy per breach</strong> &mdash; acknowledges which attempt this is</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- KEY DIFFERENCES -->
+<div class="section">
+  <div class="eyebrow">The four structural shifts</div>
+  <h2>Why the difference matters, in four moves</h2>
+
+  <div class="diffs">
+    <div class="diff-card">
+      <div class="diff-num">01</div>
+      <div class="diff-label">Clocks don&rsquo;t matter. Events do.</div>
+      <div class="diff-body">The old design fires at 0h/24h/48h. The framework fires when something changes. A customer whose booking has recovered at hour 6 shouldn&rsquo;t still be getting &ldquo;please wait&rdquo; pings at hour 24.</div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">02</div>
+      <div class="diff-label">Different failures deserve different responses.</div>
+      <div class="diff-body">Breach #1 is a missed date. Breach #3 is a relationship failure. They cannot be the same message or the same channel stack. Severity escalates with every breach.</div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">03</div>
+      <div class="diff-label">A human must show up before trust runs out.</div>
+      <div class="diff-body">After three broken promises, text cannot carry it. Tier 4 forces a CX call within two hours &mdash; with two concrete options, not another reassurance message.</div>
+    </div>
+    <div class="diff-card">
+      <div class="diff-num">04</div>
+      <div class="diff-label">The customer&rsquo;s right to exit is a feature, not a bug.</div>
+      <div class="diff-body">At Breach #2, the framework proactively surfaces the cancel-with-refund option. Giving the customer a graceful way out is not losing them &mdash; it&rsquo;s respecting that they&rsquo;ve already been failed twice.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- WHY IT MATTERS -->
+<div class="section">
+  <div class="eyebrow">Why ship this version</div>
+  <h2>What changes, measurably</h2>
+
+  <div class="why-wrap">
+    <h3>The outcomes we can measure</h3>
+    <ul>
+      <li><strong>Time-to-first-message drops from ~12 hours to 30 minutes.</strong> The current 48-hour batch is replaced with a 30-minute trigger.</li>
+      <li><strong>Already-recovered customers stop getting pings.</strong> Exit logic suppresses the T+24 and T+48 fires once a new slot is confirmed.</li>
+      <li><strong>Channel inflation is structurally prevented.</strong> SMS only fires if WA delivery fails. Human call only fires when text has been exhausted.</li>
+      <li><strong>Breach #3 customers reach a human within 2 hours.</strong> Not a chatbot. Not another WhatsApp template. A person.</li>
+      <li><strong>Refund option is offered &mdash; not buried.</strong> Customers who have been failed twice are given a dignified way out, in their own language, on the channel they&rsquo;re already on.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- BOTTOM LINE -->
+<div class="section" style="margin-bottom:40px">
+  <div class="eyebrow">Bottom line</div>
+  <h2>The framework in one sentence</h2>
+  <p style="font-family: 'DM Serif Display', serif; font-size:22px; line-height:1.45; color: var(--text); margin-top: 14px; max-width: 760px;">
+    Wiom is pull-based. We leave the app only when the customer cannot find the truth by opening it &mdash; and when we do leave, we leave with discipline, escalation that matches the broken trust, and a human on the phone before the customer gives up.
+  </p>
+</div>
+
+<div class="footer">
+  Customer Communication Framework &mdash; B2I Scope  |  Slot Breach Worked Example  |  Shiva + Ashish  |  April 2026
+</div>
+
+</div>
+
+<script>
+function toggleTheme() {
+  const t = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelector('.pill-btn').innerHTML = t === 'dark' ? '&#9788;' : '&#9790;';
+  localStorage.setItem('slot-breach-theme', t);
+}
+window.addEventListener('scroll', () => {
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progress').style.width = (h > 0 ? (window.scrollY / h * 100) : 0) + '%';
+});
+const savedTheme = localStorage.getItem('slot-breach-theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.querySelector('.pill-btn').innerHTML = savedTheme === 'dark' ? '&#9788;' : '&#9790;';
+}
+</script>
+</body>
+</html>
